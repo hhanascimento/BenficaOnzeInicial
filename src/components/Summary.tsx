@@ -20,8 +20,8 @@ interface Props {
 export default function Summary({
   match, result, seconds, difficulty, streak, usedReveal, revealed, onNext, onReplay,
 }: Props) {
-  const headline = usedReveal ? 'Xi revealed' : result.solved ? 'Onze completo!' : 'Round over';
-  const scoreLabel = result.solved ? 'Flawless round' : 'Tough one';
+  const headline = usedReveal ? 'Onze revelado' : result.solved ? 'Onze completo!' : 'Round over';
+  const scoreLabel = result.solved ? 'Perfeito' : 'Complicado';
 
   return (
     <div className="summary" data-testid="summary">
@@ -38,30 +38,30 @@ export default function Summary({
         <div className="summary__cell">
           <IonIcon icon={trophy} />
           <strong>{result.points}</strong>
-          <span>points</span>
+          <span>pontos</span>
         </div>
         <div className="summary__cell">
           <IonIcon icon={timerOutline} />
           <strong>{formatTime(seconds)}</strong>
-          <span>time</span>
+          <span>tempo</span>
         </div>
         <div className="summary__cell">
           <IonIcon icon={star} />
           <strong>{difficulty}/5</strong>
-          <span>difficulty</span>
+          <span>dificuldade</span>
         </div>
         <div className="summary__cell">
           <IonIcon icon={flame} />
           <strong>{streak}</strong>
-          <span>streak</span>
+          <span>sequência</span>
         </div>
       </div>
 
       <ul className="summary__breakdown">
-        <li><span>Players found</span><b>{revealed}/{match.lineup.length}</b></li>
-        <li><span>Base score</span><b>{result.base}</b></li>
-        <li><span>Time bonus</span><b>+{result.timeBonus}</b></li>
-        <li><span>Difficulty multiplier</span><b>×{result.multiplier.toFixed(1)}</b></li>
+        <li><span>Jogadores encontrados</span><b>{revealed}/{match.lineup.length}</b></li>
+        <li><span>Score</span><b>{result.base}</b></li>
+        <li><span>Bonus</span><b>+{result.timeBonus}</b></li>
+        <li><span>Multiplicador Dificuldade</span><b>×{result.multiplier.toFixed(1)}</b></li>
         {result.hintPenalty > 0 && (
           <li className="summary__penalty"><span>Hints used</span><b>−{result.hintPenalty}</b></li>
         )}
@@ -69,9 +69,9 @@ export default function Summary({
 
       <div className="summary__actions">
         <IonButton fill="outline" size="small" color="medium" onClick={onReplay}>
-          <IonIcon slot="start" icon={refresh} /> Replay XI
+          <IonIcon slot="start" icon={refresh} /> Repetir
         </IonButton>
-        <IonButton size="small" onClick={onNext}>Next match</IonButton>
+        <IonButton size="small" onClick={onNext}>Próximo Jogo</IonButton>
       </div>
     </div>
   );

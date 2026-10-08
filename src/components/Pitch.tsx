@@ -27,10 +27,8 @@ export default function Pitch({
       <div className="pitch__box pitch__box--top" aria-hidden />
       <div className="pitch__box pitch__box--bottom" aria-hidden />
       <div className="pitch__end pitch__end--top">
-        <span>OPPONENT</span>
       </div>
       <div className="pitch__end pitch__end--bottom">
-        <span>BENFICA</span>
       </div>
 
       {lineup.map((player, index) => (

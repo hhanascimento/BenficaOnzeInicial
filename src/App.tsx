@@ -38,12 +38,6 @@ const MAX_AVG = maxAverageFrequency(MATCHES, FREQ);
 
 type Msg = { text: string; kind: 'ok' | 'bad' | 'info' };
 
-const SETTING_LABELS: { key: keyof Settings; label: string; icon: string; hint: string }[] = [
-  { key: 'hints', label: 'Hints', icon: bulb, hint: 'Show each player’s first initial' },
-  { key: 'blind', label: 'Blind match', icon: lockClosed, hint: 'Hide the score and date' },
-  { key: 'hard', label: 'Hard', icon: flash, hint: 'No autocomplete suggestions' },
-];
-
 export default function App() {
   const [index, setIndex] = useState(0);
   const match = MATCHES[index];
@@ -201,7 +195,7 @@ export default function App() {
 
   const showScore = !settings.blind || finished;
 
-  const dateLabel = new Date(match.date + 'T12:00:00').toLocaleDateString('en-GB', {
+  const dateLabel = new Date(match.date + 'T12:00:00').toLocaleDateString('pt-PT', {
     day: 'numeric', month: 'short', year: 'numeric',
   });
 
@@ -210,10 +204,10 @@ export default function App() {
       <IonHeader>
         <IonToolbar>
           <IonTitle>
-            <IonIcon icon={football} /> Benfica XI
+            Benfica Onze Inicial
             <span className="titleCount"> {index + 1}/{MATCHES.length}</span>
           </IonTitle>
-          <div className="hud" slot="end">
+          <div className="hud" slot="end"> 
             <span className="hud__item" title="Win streak"><IonIcon icon={flame} />{stats.streak}</span>
             <span className="hud__item" title="Total score"><IonIcon icon={trophy} />{stats.totalScore}</span>
           </div>
@@ -237,7 +231,7 @@ export default function App() {
               {match.stage && <IonBadge color="medium">{match.stage}</IonBadge>}
               <span>{settings.blind && !finished ? 'Date hidden' : dateLabel}</span>
               <span>·</span>
-              <span>{match.home ? 'Home' : 'Away'}</span>
+              <span>{match.home ? 'Casa' : 'Fora'}</span>
               {match.venue && <span>· {match.venue}</span>}
             </p>
             <p className="stars" title={`Difficulty ${difficulty}/5`} data-testid="difficulty">
@@ -246,22 +240,6 @@ export default function App() {
               ))}
             </p>
           </section>
-
-          <div className="settings" data-testid="settings">
-            {SETTING_LABELS.map(({ key, label, icon, hint }) => (
-              <button
-                key={key}
-                type="button"
-                title={hint}
-                className={`toggle ${settings[key] ? 'toggle--on' : ''}`}
-                data-testid={`toggle-${key}`}
-                aria-pressed={settings[key]}
-                onClick={() => toggle(key)}
-              >
-                <IonIcon icon={icon} /> {label}
-              </button>
-            ))}
-          </div>
 
           <Pitch
             lineup={match.lineup}
@@ -285,7 +263,7 @@ export default function App() {
                   {finished ? (
                     <strong className="solved"><IonIcon icon={checkmarkCircle} /> {revealed.size}/{match.lineup.length}</strong>
                   ) : (
-                    <>Players found: {revealed.size}/{match.lineup.length}</>
+                    <>Jogadores Encontrados: {revealed.size}/{match.lineup.length}</>
                   )}
                 </span>
               </div>
@@ -310,7 +288,7 @@ export default function App() {
                     <IonInput
                       className="guessInput"
                       data-testid="guess-input"
-                      placeholder={settings.hard ? 'Recall a name…' : 'Type a player name…'}
+                      placeholder={settings.hard ? 'Recall a name…' : 'Escreve o nome do jogador…'}
                       value={guess}
                       autocapitalize="words"
                       enterkeyhint="done"
@@ -346,7 +324,7 @@ export default function App() {
                     )}
                   </div>
                   <IonButton data-testid="guess-button" onClick={() => submitGuess(guess)}>
-                    Guess
+                    Adivinha
                   </IonButton>
                 </div>
 
@@ -365,10 +343,10 @@ export default function App() {
                 <IonIcon slot="start" icon={refresh} /> Reset
               </IonButton>
               <IonButton fill="outline" size="small" color="medium" onClick={giveUp} disabled={finished}>
-                <IonIcon slot="start" icon={eye} /> Reveal
+                <IonIcon slot="start" icon={eye} /> Resolve
               </IonButton>
               <IonButton fill="solid" size="small" onClick={nextMatch}>
-                Next match
+                Próximo Jogo
               </IonButton>
             </div>
           </section>
@@ -378,8 +356,8 @@ export default function App() {
       <IonFooter>
         <IonToolbar>
           <p className="footer">
-            {MATCHES.length} historic matches · solved {stats.solved}/{stats.played} ·
-            best streak {stats.bestStreak}
+            {MATCHES.length} jogos históricos · resolvidos {stats.solved}/{stats.played} ·
+            melhor sequência {stats.bestStreak}
             <button
               type="button"
               className="footerLink"
