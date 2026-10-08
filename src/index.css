@@ -1,0 +1,20 @@
+/* Minimal base – Ionic supplies the component styles, variables.css the palette. */
+* { -webkit-tap-highlight-color: transparent; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0f1115;
+  color: #e7ebf1;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+ion-content.game {
+  --background: #0f1115;
+}

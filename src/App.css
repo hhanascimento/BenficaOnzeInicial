@@ -1,0 +1,316 @@
+.game {
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+.pitchWrap {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 10px 0 24px;
+}
+
+.card {
+  background: #1b1f27;
+  border: 1px solid #262c37;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 0 0 12px;
+}
+
+.match h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  text-align: center;
+  color: #fff;
+}
+
+.match .score {
+  color: var(--ion-color-primary-tint);
+}
+
+.match .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 12px;
+  color: #9aa4b2;
+}
+
+.controls { margin-top: 12px; }
+
+.progressLabel {
+  text-align: center;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #c7ced9;
+}
+
+.solved { color: #2dd36f; }
+
+.guessRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.guessInput {
+  --background: #0f1115;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.msg {
+  margin: 10px 0 0;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.msg--ok { background: rgba(45, 211, 111, 0.15); color: #7ef2a8; }
+.msg--bad { background: rgba(235, 68, 90, 0.15); color: #ff9aa8; }
+.msg--info { background: rgba(255, 196, 0, 0.13); color: #ffd76a; }
+
+.found {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #8b93a1;
+  margin: 6px 0;
+}
+
+.guessField {
+  position: relative;
+  flex: 1;
+}
+
+.suggest {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: #14181f;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.suggest li button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #e7ebf1;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.suggest li button:hover,
+.suggest li button:focus-visible {
+  background: #222836;
+  outline: none;
+}
+
+/* ---------- header HUD ---------- */
+.titleCount {
+  font-size: 12px;
+  font-weight: 400;
+  color: #9aa4b2;
+  margin-left: 4px;
+}
+
+.hud {
+  display: flex;
+  gap: 12px;
+  padding-right: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #e7ebf1;
+  align-items: center;
+}
+
+.hud__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hud__item ion-icon { color: #ffc400; }
+
+/* ---------- difficulty stars ---------- */
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin: 6px 0 0 !important;
+  font-size: 13px;
+}
+
+.stars ion-icon.off { color: #3a4250; }
+
+/* ---------- settings toggles ---------- */
+.settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c7ced9;
+  background: #1b1f27;
+  border: 1px solid #2c3340;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.toggle:hover { border-color: #3d4757; }
+
+.toggle--on {
+  background: rgba(179, 0, 0, 0.22);
+  border-color: #b30000;
+  color: #ff9aa8;
+}
+
+/* ---------- stats bar + timer ---------- */
+.statbar { margin-bottom: 12px; }
+
+.statbar ion-progress-bar {
+  --background: #232936;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.statbar__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #c7ced9;
+}
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #e7ebf1;
+}
+
+.timer--done { color: #9aa4b2; }
+
+.statbar__count strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---------- guess field ---------- */
+.guessField {
+  position: relative;
+  flex: 1;
+  transition: transform 0.08s;
+}
+
+.guessField--shake { animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+.guessInput {
+  --background: #0f1115;
+  --padding-start: 30px;
+  --padding-end: 34px;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.guessField--shake .guessInput { border-color: #eb445a; }
+
+.guessClear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  font-size: 18px;
+  color: #7a8494;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.guessClear:hover { color: #d6dbe3; background: #232936; }
+
+.suggest li button.is-active { background: #222836; }
+
+/* ---------- found chips / actions ---------- */
+.found ion-chip { height: 26px; font-size: 11px; }
+.actions { flex-wrap: wrap; }
+
+@media (max-width: 380px) {
+  .guessRow { flex-wrap: wrap; }
+  .guessRow ion-button { width: 100%; margin: 0; }
+  .actions ion-button { flex: 1 1 30%; font-size: 11px; }
+}
+
+.footerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+  color: var(--ion-color-primary-tint);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}

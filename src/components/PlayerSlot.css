@@ -1,0 +1,140 @@
+.slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 64px;
+  pointer-events: none;
+}
+
+.slot__photo {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.slot__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.slot__initials {
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.slot__name {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(179, 0, 0, 0.92);
+  padding: 1px 5px;
+  border-radius: 8px;
+  max-width: 74px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+
+.slot__placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.slot--pop .slot__photo {
+  animation: pop 0.45s ease-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* focus ring for keyboard/click selection of an already-found slot */
+.slot__photo--active {
+  border-color: #ffc400;
+  box-shadow: 0 0 0 2px rgba(255, 196, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.slot__lock {
+  font-size: clamp(10px, 3cqw, 15px);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- fluid sizing: slots scale with the pitch container ---------- */
+.slot { width: clamp(38px, 14cqw, 72px); }
+
+.slot__photo {
+  width: clamp(28px, 10cqw, 52px);
+  height: clamp(28px, 10cqw, 52px);
+}
+
+.slot__placeholder {
+  width: clamp(24px, 8.6cqw, 46px);
+  height: clamp(24px, 8.6cqw, 46px);
+  font-size: clamp(8px, 2.2cqw, 11px);
+}
+
+.slot__initials { font-size: clamp(10px, 3.2cqw, 16px); }
+
+.slot__name {
+  font-size: clamp(7px, 2.1cqw, 11px);
+  max-width: clamp(46px, 15cqw, 80px);
+}
+
+/* revealed slots become tappable (they are not just decoration) */
+.slot__tap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.slot--hidden { pointer-events: none; }
+
+.slot__hint {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: clamp(12px, 3.6cqw, 19px);
+  height: clamp(12px, 3.6cqw, 19px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(8px, 2.4cqw, 12px);
+  font-style: normal;
+  font-weight: 800;
+  color: #0f1115;
+  background: #ffc400;
+  border-radius: 50%;
+}

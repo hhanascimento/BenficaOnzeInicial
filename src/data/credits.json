@@ -1,0 +1,601 @@
+{
+ "_note": "Photos downloaded from Wikimedia Commons / Wikipedia (freely licensed). Open 'source' for the article and follow its image credit for attribution.",
+ "players": {
+  "adel-taarabt": {
+   "name": "Adel Taarabt",
+   "source": "https://pt.wikipedia.org/wiki/Adel_Taarabt"
+  },
+  "aldair": {
+   "name": "Aldair",
+   "source": "https://pt.wikipedia.org/wiki/Aldair"
+  },
+  "alejandro-grimaldo": {
+   "name": "Alejandro Grimaldo",
+   "source": "https://pt.wikipedia.org/wiki/Alejandro_Grimaldo"
+  },
+  "aleksandr-mostovoy": {
+   "name": "Aleksandr Mostovoy",
+   "source": "https://pt.wikipedia.org/wiki/Aleksandr_Mostovoy"
+  },
+  "alexander-bah": {
+   "name": "Alexander Bah",
+   "source": "https://pt.wikipedia.org/wiki/Alexander_Bah"
+  },
+  "anatoliy-trubin": {
+   "name": "Anatoliy Trubin",
+   "source": "https://pt.wikipedia.org/wiki/Anatoliy_Trubin"
+  },
+  "andre-carrillo": {
+   "name": "André Carrillo",
+   "source": "https://en.wikipedia.org/wiki/Andr%C3%A9_Carrillo"
+  },
+  "andre-gomes": {
+   "name": "André Gomes",
+   "source": "https://en.wikipedia.org/wiki/Andr%C3%A9_Gomes"
+  },
+  "andre-horta": {
+   "name": "André Horta",
+   "source": "https://en.wikipedia.org/wiki/Andr%C3%A9_Horta"
+  },
+  "andreas-samaris": {
+   "name": "Andreas Samaris",
+   "source": "https://pt.wikipedia.org/wiki/Andreas_Samaris"
+  },
+  "andreas-schjelderup": {
+   "name": "Andreas Schjelderup",
+   "source": "https://pt.wikipedia.org/wiki/Andreas_Schjelderup"
+  },
+  "angel-di-maria": {
+   "name": "Ángel Di María",
+   "source": "https://pt.wikipedia.org/wiki/%C3%81ngel_Di_Mar%C3%ADa"
+  },
+  "antonio-barros": {
+   "name": "António Barros",
+   "source": "https://en.wikipedia.org/wiki/Ant%C3%B3nio_Barros"
+  },
+  "antonio-simoes": {
+   "name": "António Simões",
+   "source": "https://en.wikipedia.org/wiki/Ant%C3%B3nio_Sim%C3%B5es"
+  },
+  "armando-sa": {
+   "name": "Armando Sá",
+   "source": "https://pt.wikipedia.org/wiki/Armando_S%C3%A1"
+  },
+  "arthur-cabral": {
+   "name": "Arthur Cabral",
+   "source": "https://pt.wikipedia.org/wiki/Arthur_Cabral"
+  },
+  "artur-correia": {
+   "name": "Artur Correia",
+   "source": "https://en.wikipedia.org/wiki/Artur_Correia"
+  },
+  "artur-jorge": {
+   "name": "Artur Jorge",
+   "source": "https://pt.wikipedia.org/wiki/Artur_Jorge"
+  },
+  "artur-moraes": {
+   "name": "Artur Moraes",
+   "source": "https://pt.wikipedia.org/wiki/Artur_Moraes"
+  },
+  "axel-witsel": {
+   "name": "Axel Witsel",
+   "source": "https://pt.wikipedia.org/wiki/Axel_Witsel"
+  },
+  "bruno-basto": {
+   "name": "Bruno Basto",
+   "source": "https://pt.wikipedia.org/wiki/Bruno_Basto"
+  },
+  "bruno-cesar": {
+   "name": "Bruno César",
+   "source": "https://pt.wikipedia.org/wiki/Bruno_C%C3%A9sar"
+  },
+  "bruno-varela": {
+   "name": "Bruno Varela",
+   "source": "https://pt.wikipedia.org/wiki/Bruno_Varela"
+  },
+  "caio-lucas": {
+   "name": "Caio Lucas",
+   "source": "https://pt.wikipedia.org/wiki/Caio_Lucas"
+  },
+  "carlos-gamarra": {
+   "name": "Carlos Gamarra",
+   "source": "https://pt.wikipedia.org/wiki/Carlos_Gamarra"
+  },
+  "carlos-marchena": {
+   "name": "Carlos Marchena",
+   "source": "https://pt.wikipedia.org/wiki/Carlos_Marchena"
+  },
+  "carlos-mozer": {
+   "name": "Carlos Mozer",
+   "source": "https://en.wikipedia.org/wiki/Carlos_Mozer"
+  },
+  "carlos-vinicius": {
+   "name": "Carlos Vinícius",
+   "source": "https://en.wikipedia.org/wiki/Carlos_Vin%C3%ADcius"
+  },
+  "cavem": {
+   "name": "Domiciano Cavém",
+   "source": "https://en.wikipedia.org/wiki/Domiciano_Cav%C3%A9m"
+  },
+  "cesar-peixoto": {
+   "name": "César Peixoto",
+   "source": "https://en.wikipedia.org/wiki/C%C3%A9sar_Peixoto"
+  },
+  "claudio-caniggia": {
+   "name": "Claudio Caniggia",
+   "source": "https://pt.wikipedia.org/wiki/Claudio_Caniggia"
+  },
+  "costa-pereira": {
+   "name": "Costa Pereira",
+   "source": "https://pt.wikipedia.org/wiki/Costa_Pereira"
+  },
+  "cristian-rodriguez": {
+   "name": "Cristian Rodríguez",
+   "source": "https://en.wikipedia.org/wiki/Cristian_Rodr%C3%ADguez"
+  },
+  "danilo-barbosa": {
+   "name": "Danilo Barbosa",
+   "source": "https://pt.wikipedia.org/wiki/Danilo_Barbosa"
+  },
+  "darwin-nunez": {
+   "name": "Darwin Núñez",
+   "source": "https://en.wikipedia.org/wiki/Darwin_N%C3%BA%C3%B1ez"
+  },
+  "david-luiz": {
+   "name": "David Luiz",
+   "source": "https://pt.wikipedia.org/wiki/David_Luiz"
+  },
+  "david-neres": {
+   "name": "David Neres",
+   "source": "https://pt.wikipedia.org/wiki/David_Neres"
+  },
+  "derlei": {
+   "name": "Derlei",
+   "source": "https://pt.wikipedia.org/wiki/Derlei"
+  },
+  "diogo-goncalves": {
+   "name": "Diogo Gonçalves",
+   "source": "https://en.wikipedia.org/wiki/Diogo_Gon%C3%A7alves"
+  },
+  "dodi-lukebakio": {
+   "name": "Dodi Lukebakio",
+   "source": "https://pt.wikipedia.org/wiki/Dodi_Lukebakio"
+  },
+  "donizete": {
+   "name": "Donizete Pantera",
+   "source": "https://pt.wikipedia.org/wiki/Donizete_Pantera"
+  },
+  "dyego-sousa": {
+   "name": "Dyego Sousa",
+   "source": "https://pt.wikipedia.org/wiki/Dyego_Sousa"
+  },
+  "edcarlos": {
+   "name": "Edcarlos",
+   "source": "https://pt.wikipedia.org/wiki/Edcarlos"
+  },
+  "eder-bonfim": {
+   "name": "Éder Bonfim",
+   "source": "https://en.wikipedia.org/wiki/%C3%89der_Bonfim"
+  },
+  "edilson": {
+   "name": "Edílson (footballer, born 1971)",
+   "source": "https://en.wikipedia.org/wiki/Ed%C3%ADlson_%28footballer%2C_born_1971%29"
+  },
+  "eduardo-salvio": {
+   "name": "Eduardo Salvio",
+   "source": "https://pt.wikipedia.org/wiki/Eduardo_Salvio"
+  },
+  "enzo-fernandez": {
+   "name": "Enzo Fernández",
+   "source": "https://en.wikipedia.org/wiki/Enzo_Fern%C3%A1ndez"
+  },
+  "enzo-perez": {
+   "name": "Enzo Pérez",
+   "source": "https://en.wikipedia.org/wiki/Enzo_P%C3%A9rez"
+  },
+  "eusebio": {
+   "name": "Eusébio",
+   "source": "https://pt.wikipedia.org/wiki/Eus%C3%A9bio"
+  },
+  "ezequiel-garay": {
+   "name": "Ezequiel Garay",
+   "source": "https://pt.wikipedia.org/wiki/Ezequiel_Garay"
+  },
+  "fabio-coentrao": {
+   "name": "Fábio Coentrão",
+   "source": "https://en.wikipedia.org/wiki/F%C3%A1bio_Coentr%C3%A3o"
+  },
+  "fabrizio-miccoli": {
+   "name": "Fabrizio Miccoli",
+   "source": "https://pt.wikipedia.org/wiki/Fabrizio_Miccoli"
+  },
+  "facundo-ferreyra": {
+   "name": "Facundo Ferreyra",
+   "source": "https://pt.wikipedia.org/wiki/Facundo_Ferreyra"
+  },
+  "fernando-meira": {
+   "name": "Fernando Meira",
+   "source": "https://pt.wikipedia.org/wiki/Fernando_Meira"
+  },
+  "franco-jara": {
+   "name": "Franco Jara",
+   "source": "https://pt.wikipedia.org/wiki/Franco_Jara"
+  },
+  "fredrik-aursnes": {
+   "name": "Fredrik Aursnes",
+   "source": "https://pt.wikipedia.org/wiki/Fredrik_Aursnes"
+  },
+  "gabriel-pires": {
+   "name": "Gabriel Appelt Pires",
+   "source": "https://pt.wikipedia.org/wiki/Gabriel_Appelt_Pires"
+  },
+  "gaston-taument": {
+   "name": "Gaston Taument",
+   "source": "https://en.wikipedia.org/wiki/Gaston_Taument"
+  },
+  "gedson-fernandes": {
+   "name": "Gedson Fernandes",
+   "source": "https://pt.wikipedia.org/wiki/Gedson_Fernandes"
+  },
+  "geovanni": {
+   "name": "Geovanni",
+   "source": "https://pt.wikipedia.org/wiki/Geovanni"
+  },
+  "german-conti": {
+   "name": "Germán Conti",
+   "source": "https://en.wikipedia.org/wiki/Germ%C3%A1n_Conti"
+  },
+  "gil-dias": {
+   "name": "Gil Dias",
+   "source": "https://en.wikipedia.org/wiki/Gil_Dias"
+  },
+  "gilles-binya": {
+   "name": "Gilles Binya",
+   "source": "https://pt.wikipedia.org/wiki/Gilles_Binya"
+  },
+  "glenn-helder": {
+   "name": "Glenn Helder",
+   "source": "https://en.wikipedia.org/wiki/Glenn_Helder"
+  },
+  "glenn-stromberg": {
+   "name": "Glenn Strömberg",
+   "source": "https://pt.wikipedia.org/wiki/Glenn_Str%C3%B6mberg"
+  },
+  "goncalo-guedes": {
+   "name": "Gonçalo Guedes",
+   "source": "https://en.wikipedia.org/wiki/Gon%C3%A7alo_Guedes"
+  },
+  "goncalo-ramos": {
+   "name": "Gonçalo Ramos",
+   "source": "https://en.wikipedia.org/wiki/Gon%C3%A7alo_Ramos"
+  },
+  "guilherme-siqueira": {
+   "name": "Guilherme Siqueira",
+   "source": "https://pt.wikipedia.org/wiki/Guilherme_Siqueira"
+  },
+  "hassan-yebda": {
+   "name": "Hassan Yebda",
+   "source": "https://pt.wikipedia.org/wiki/Hassan_Yebda"
+  },
+  "helder-cristovao": {
+   "name": "Hélder Cristóvão",
+   "source": "https://www.wikidata.org/wiki/Q667306"
+  },
+  "helton-leite": {
+   "name": "Helton Leite",
+   "source": "https://pt.wikipedia.org/wiki/Helton_Leite"
+  },
+  "ilian-iliev": {
+   "name": "Ilian Iliev",
+   "source": "https://en.wikipedia.org/wiki/Ilian_Iliev"
+  },
+  "issa-kabore": {
+   "name": "Issa Kaboré",
+   "source": "https://en.wikipedia.org/wiki/Issa_Kabor%C3%A9"
+  },
+  "ivan-cavaleiro": {
+   "name": "Ivan Cavaleiro",
+   "source": "https://pt.wikipedia.org/wiki/Ivan_Cavaleiro"
+  },
+  "jaime-graca": {
+   "name": "Jaime Graça",
+   "source": "https://en.wikipedia.org/wiki/Jaime_Gra%C3%A7a"
+  },
+  "jan-oblak": {
+   "name": "Jan Oblak",
+   "source": "https://pt.wikipedia.org/wiki/Jan_Oblak"
+  },
+  "jan-vertonghen": {
+   "name": "Jan Vertonghen",
+   "source": "https://pt.wikipedia.org/wiki/Jan_Vertonghen"
+  },
+  "javi-garcia": {
+   "name": "Javi García",
+   "source": "https://pt.wikipedia.org/wiki/Javi_Garc%C3%ADa"
+  },
+  "javier-saviola": {
+   "name": "Javier Saviola",
+   "source": "https://pt.wikipedia.org/wiki/Javier_Saviola"
+  },
+  "joan-capdevila": {
+   "name": "Joan Capdevila",
+   "source": "https://pt.wikipedia.org/wiki/Joan_Capdevila"
+  },
+  "joao-felix": {
+   "name": "João Félix",
+   "source": "https://en.wikipedia.org/wiki/Jo%C3%A3o_F%C3%A9lix"
+  },
+  "joao-neves": {
+   "name": "João Neves",
+   "source": "https://en.wikipedia.org/wiki/Jo%C3%A3o_Neves"
+  },
+  "jose-aguas": {
+   "name": "José Águas",
+   "source": "https://en.wikipedia.org/wiki/Jos%C3%A9_%C3%81guas"
+  },
+  "jose-antonio-reyes": {
+   "name": "José Antonio Reyes",
+   "source": "https://en.wikipedia.org/wiki/Jos%C3%A9_Antonio_Reyes"
+  },
+  "jose-henrique": {
+   "name": "José Henrique",
+   "source": "https://en.wikipedia.org/wiki/Jos%C3%A9_Henrique"
+  },
+  "jose-moreira": {
+   "name": "José Moreira",
+   "source": "https://en.wikipedia.org/wiki/Jos%C3%A9_Moreira"
+  },
+  "julian-draxler": {
+   "name": "Julian Draxler",
+   "source": "https://pt.wikipedia.org/wiki/Julian_Draxler"
+  },
+  "julian-weigl": {
+   "name": "Julian Weigl",
+   "source": "https://pt.wikipedia.org/wiki/Julian_Weigl"
+  },
+  "konstantinos-mitroglou": {
+   "name": "Konstantinos Mitroglou",
+   "source": "https://pt.wikipedia.org/wiki/Konstantinos_Mitroglou"
+  },
+  "leandro-barreiro": {
+   "name": "Leandro Barreiro",
+   "source": "https://pt.wikipedia.org/wiki/Leandro_Barreiro"
+  },
+  "lionel-carole": {
+   "name": "Lionel Carole",
+   "source": "https://en.wikipedia.org/wiki/Lionel_Carole"
+  },
+  "lorenzo-melgarejo": {
+   "name": "Lorenzo Melgarejo",
+   "source": "https://pt.wikipedia.org/wiki/Lorenzo_Melgarejo"
+  },
+  "loris-benito": {
+   "name": "Loris Benito",
+   "source": "https://pt.wikipedia.org/wiki/Loris_Benito"
+  },
+  "luca-waldschmidt": {
+   "name": "Luca Waldschmidt",
+   "source": "https://pt.wikipedia.org/wiki/Luca_Waldschmidt"
+  },
+  "luis-andrade": {
+   "name": "Luís Andrade",
+   "source": "https://en.wikipedia.org/wiki/Lu%C3%ADs_Andrade"
+  },
+  "luisao": {
+   "name": "Luisão",
+   "source": "https://en.wikipedia.org/wiki/Luis%C3%A3o"
+  },
+  "malta-da-silva": {
+   "name": "Malta da Silva",
+   "source": "https://www.wikidata.org/wiki/Q3284634"
+  },
+  "manu": {
+   "name": "Manú",
+   "source": "https://pt.wikipedia.org/wiki/Man%C3%BA"
+  },
+  "manuel-bento": {
+   "name": "Manuel Galrinho Bento",
+   "source": "https://pt.wikipedia.org/wiki/Manuel_Galrinho_Bento"
+  },
+  "mario-coluna": {
+   "name": "Mário Coluna",
+   "source": "https://pt.wikipedia.org/wiki/M%C3%A1rio_Coluna"
+  },
+  "mario-joao": {
+   "name": "Mário João",
+   "source": "https://en.wikipedia.org/wiki/M%C3%A1rio_Jo%C3%A3o"
+  },
+  "maxi-pereira": {
+   "name": "Maxi Pereira",
+   "source": "https://pt.wikipedia.org/wiki/Maxi_Pereira"
+  },
+  "mehdi-carcela-gonzalez": {
+   "name": "Mehdi Carcela-Gonzalez",
+   "source": "https://pt.wikipedia.org/wiki/Mehdi_Carcela-Gonzalez"
+  },
+  "miklos-feher": {
+   "name": "Miklós Fehér",
+   "source": "https://pt.wikipedia.org/wiki/Mikl%C3%B3s_Feh%C3%A9r"
+  },
+  "mile-svilar": {
+   "name": "Mile Svilar",
+   "source": "https://pt.wikipedia.org/wiki/Mile_Svilar"
+  },
+  "miralem-sulejmani": {
+   "name": "Miralem Sulejmani",
+   "source": "https://pt.wikipedia.org/wiki/Miralem_Sulejmani"
+  },
+  "nelson-semedo": {
+   "name": "Nélson Semedo",
+   "source": "https://en.wikipedia.org/wiki/N%C3%A9lson_Semedo"
+  },
+  "neno": {
+   "name": "Neno (futebolista)",
+   "source": "https://pt.wikipedia.org/wiki/Neno_%28futebolista%29"
+  },
+  "nicolas-otamendi": {
+   "name": "Nicolás Otamendi",
+   "source": "https://pt.wikipedia.org/wiki/Nicol%C3%A1s_Otamendi"
+  },
+  "nolito": {
+   "name": "Nolito",
+   "source": "https://pt.wikipedia.org/wiki/Nolito"
+  },
+  "nuno-tavares": {
+   "name": "Nuno Tavares",
+   "source": "https://pt.wikipedia.org/wiki/Nuno_Tavares"
+  },
+  "odysseas-vlachodimos": {
+   "name": "Odysseas Vlachodimos",
+   "source": "https://en.wikipedia.org/wiki/Odysseas_Vlachodimos"
+  },
+  "ola-john": {
+   "name": "Ola John",
+   "source": "https://pt.wikipedia.org/wiki/Ola_John"
+  },
+  "orkun-kokcu": {
+   "name": "Orkun Kökçü",
+   "source": "https://en.wikipedia.org/wiki/Orkun_K%C3%B6k%C3%A7%C3%BC"
+  },
+  "oscar-cardozo": {
+   "name": "Óscar Cardozo",
+   "source": "https://pt.wikipedia.org/wiki/%C3%93scar_Cardozo"
+  },
+  "pablo-aimar": {
+   "name": "Pablo Aimar",
+   "source": "https://pt.wikipedia.org/wiki/Pablo_Aimar"
+  },
+  "paulo-madeira": {
+   "name": "Paulo Madeira",
+   "source": "https://pt.wikipedia.org/wiki/Paulo_Madeira"
+  },
+  "paulo-sousa": {
+   "name": "Paulo Sousa",
+   "source": "https://pt.wikipedia.org/wiki/Paulo_Sousa"
+  },
+  "petar-musa": {
+   "name": "Petar Musa",
+   "source": "https://pt.wikipedia.org/wiki/Petar_Musa"
+  },
+  "pierre-van-hooijdonk": {
+   "name": "Pierre van Hooijdonk",
+   "source": "https://en.wikipedia.org/wiki/Pierre_van_Hooijdonk"
+  },
+  "pizzi": {
+   "name": "Pizzi",
+   "source": "https://pt.wikipedia.org/wiki/Pizzi"
+  },
+  "rafa-silva": {
+   "name": "Rafa Silva",
+   "source": "https://pt.wikipedia.org/wiki/Rafa_Silva"
+  },
+  "raul-jimenez": {
+   "name": "Raúl Jiménez",
+   "source": "https://en.wikipedia.org/wiki/Ra%C3%BAl_Jim%C3%A9nez"
+  },
+  "raul-machado": {
+   "name": "Raul Machado",
+   "source": "https://pt.wikipedia.org/wiki/Raul_Machado"
+  },
+  "renato-sanches": {
+   "name": "Renato Sanches",
+   "source": "https://pt.wikipedia.org/wiki/Renato_Sanches"
+  },
+  "ricardo-gomes": {
+   "name": "Ricardo Gomes",
+   "source": "https://pt.wikipedia.org/wiki/Ricardo_Gomes"
+  },
+  "robert-enke": {
+   "name": "Robert Enke",
+   "source": "https://pt.wikipedia.org/wiki/Robert_Enke"
+  },
+  "roderick-miranda": {
+   "name": "Roderick Miranda",
+   "source": "https://pt.wikipedia.org/wiki/Roderick_Miranda"
+  },
+  "roman-yaremchuk": {
+   "name": "Roman Yaremchuk",
+   "source": "https://pt.wikipedia.org/wiki/Roman_Yaremchuk"
+  },
+  "ruben-amorim": {
+   "name": "Ruben Amorim",
+   "source": "https://pt.wikipedia.org/wiki/Ruben_Amorim"
+  },
+  "ruben-dias": {
+   "name": "Rúben Dias",
+   "source": "https://en.wikipedia.org/wiki/R%C3%BAben_Dias"
+  },
+  "rui-costa": {
+   "name": "Rui Costa",
+   "source": "https://en.wikipedia.org/wiki/Rui_Costa"
+  },
+  "rui-jordao": {
+   "name": "Rui Jordão",
+   "source": "https://pt.wikipedia.org/wiki/Rui_Jord%C3%A3o"
+  },
+  "samuel-dahl": {
+   "name": "Samuel Dahl",
+   "source": "https://en.wikipedia.org/wiki/Samuel_Dahl"
+  },
+  "samuel-soares": {
+   "name": "Samuel Soares",
+   "source": "https://pt.wikipedia.org/wiki/Samuel_Soares"
+  },
+  "sergey-ovchinnikov": {
+   "name": "Sergey Ovchinnikov",
+   "source": "https://pt.wikipedia.org/wiki/Sergey_Ovchinnikov"
+  },
+  "sergey-yuran": {
+   "name": "Sergey Yuran",
+   "source": "https://pt.wikipedia.org/wiki/Sergey_Yuran"
+  },
+  "sheu": {
+   "name": "Shéu Han",
+   "source": "https://pt.wikipedia.org/wiki/Sh%C3%A9u_Han"
+  },
+  "talisca": {
+   "name": "Anderson Talisca",
+   "source": "https://pt.wikipedia.org/wiki/Anderson_Talisca"
+  },
+  "tiago-mendes": {
+   "name": "Tiago Mendes",
+   "source": "https://pt.wikipedia.org/wiki/Tiago_Mendes"
+  },
+  "tomas-araujo": {
+   "name": "Tomás Araújo",
+   "source": "https://en.wikipedia.org/wiki/Tom%C3%A1s_Ara%C3%BAjo"
+  },
+  "tomas-tavares": {
+   "name": "Tomás Tavares",
+   "source": "https://en.wikipedia.org/wiki/Tom%C3%A1s_Tavares"
+  },
+  "valdir-bigode": {
+   "name": "Valdir Bigode",
+   "source": "https://pt.wikipedia.org/wiki/Valdir_Bigode"
+  },
+  "valdo": {
+   "name": "Valdo",
+   "source": "https://pt.wikipedia.org/wiki/Valdo"
+  },
+  "valentino-lazaro": {
+   "name": "Valentino Lazaro",
+   "source": "https://pt.wikipedia.org/wiki/Valentino_Lazaro"
+  },
+  "vangelis-pavlidis": {
+   "name": "Vangelis Pavlidis",
+   "source": "https://pt.wikipedia.org/wiki/Vangelis_Pavlidis"
+  },
+  "victor-lindelof": {
+   "name": "Victor Lindelöf",
+   "source": "https://en.wikipedia.org/wiki/Victor_Lindel%C3%B6f"
+  },
+  "vitor-baptista": {
+   "name": "Vítor Baptista",
+   "source": "https://en.wikipedia.org/wiki/V%C3%ADtor_Baptista"
+  },
+  "yuri-ribeiro": {
+   "name": "Yuri Ribeiro",
+   "source": "https://pt.wikipedia.org/wiki/Yuri_Ribeiro"
+  }
+ }
+}
