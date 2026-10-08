@@ -1,6 +1,6 @@
 .summary {
-  margin-top: 12px;
-  padding: 14px;
+  margin-top: 10px;
+  padding: 12px;
   border-radius: 12px;
   background: linear-gradient(180deg, rgba(179, 0, 0, 0.22), rgba(15, 17, 21, 0.4));
   border: 1px solid rgba(179, 0, 0, 0.5);
@@ -13,8 +13,8 @@
 }
 
 .summary__head {
-  margin: 0 0 4px;
-  font-size: 18px;
+  margin: 0 0 2px;
+  font-size: 17px;
   font-weight: 800;
   text-align: center;
   color: #fff;
@@ -27,25 +27,36 @@
 .summary__head ion-icon { color: var(--ion-color-primary-tint); }
 
 .summary__sub {
-  margin: 0 0 12px;
+  margin: 0 0 9px;
   text-align: center;
   font-size: 12px;
   color: #c7ced9;
+}
+
+.summary__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 9px;
+  font-size: 11px;
+  color: #9aa4b2;
 }
 
 .summary__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 9px;
 }
 
 .summary__cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 4px;
+  gap: 1px;
+  padding: 6px 4px;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.28);
   border: 1px solid #262c37;
@@ -57,7 +68,7 @@
 
 .summary__breakdown {
   list-style: none;
-  margin: 0 0 12px;
+  margin: 0 0 9px;
   padding: 0;
   font-size: 12px;
 }
@@ -65,7 +76,7 @@
 .summary__breakdown li {
   display: flex;
   justify-content: space-between;
-  padding: 5px 2px;
+  padding: 3px 2px;
   border-bottom: 1px dashed #262c37;
   color: #b8c0cc;
 }
@@ -80,6 +91,25 @@
   justify-content: center;
 }
 
+/* very narrow phones: keep the four cells on one row and just tighten them –
+   a 2-column grid adds a row, which is exactly what the recap cannot afford */
 @media (max-width: 360px) {
-  .summary__grid { grid-template-columns: repeat(2, 1fr); }
+  .summary__grid { gap: 4px; }
+  .summary__cell { padding: 4px 2px; }
+  .summary__cell span { font-size: 8px; letter-spacing: 0.2px; }
+  .summary__meta { gap: 4px; }
+}
+
+/* short windows: the summary has to share the screen with the pitch */
+@media (max-height: 720px) {
+  .summary { margin-top: 8px; padding: 8px; }
+  .summary__head { font-size: 15px; }
+  .summary__sub { font-size: 11px; margin-bottom: 6px; }
+  .summary__meta { font-size: 10px; margin-bottom: 6px; }
+  .summary__cell { padding: 4px 3px; }
+  .summary__cell strong { font-size: 13px; }
+  .summary__cell ion-icon { font-size: 13px; }
+  .summary__breakdown { font-size: 11px; margin-bottom: 6px; }
+  .summary__breakdown li { padding: 1.5px; }
+  .summary__actions ion-button { --padding-top: 5px; --padding-bottom: 5px; }
 }

@@ -10,7 +10,11 @@ export interface LineupPlayer {
   /** Full name as recorded in the source (e.g. "Mário Coluna"). */
   fullName?: string;
   position: PositionCode;
-  /** Pitch coordinates in percent of the pitch area (0-100). x=0 left, y=0 own goal-line. */
+  /**
+   * Source pitch coordinates: y runs 0 (own goal-line) to 100 (opponent's),
+   * x is on an 80-unit-wide grid (the source pitch is 80 wide x 100 tall and
+   * every XI is symmetric about x = 40). PlayerSlot maps x onto the full width.
+   */
   x: number;
   y: number;
   /** Path to the photo, relative to the app base (e.g. "assets/players/eusebio.jpg"). */

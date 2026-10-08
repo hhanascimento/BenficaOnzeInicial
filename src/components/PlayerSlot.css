@@ -1,10 +1,11 @@
 .slot {
   position: absolute;
+  /* the circle is centred on the coordinate: x/y percentages land on the pitch
+     position itself, and the name is drawn just underneath it */
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
   width: 64px;
   pointer-events: none;
 }
@@ -36,7 +37,14 @@
   letter-spacing: 0.5px;
 }
 
+/* The name hangs under the photo without taking part in the slot's box, so the
+   circle – not the circle + label – is what sits exactly on the pitch coordinate
+   and can never be clipped by the pitch edge. */
 .slot__name {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 10px;
   font-weight: 700;
   color: #fff;
@@ -82,29 +90,29 @@
 }
 
 .slot__lock {
-  font-size: clamp(10px, 3cqw, 15px);
+  font-size: clamp(6px, 3cqw, 15px);
   color: rgba(255, 255, 255, 0.75);
 }
 
 /* ---------- fluid sizing: slots scale with the pitch container ---------- */
-.slot { width: clamp(38px, 14cqw, 72px); }
+.slot { width: clamp(18px, 14cqw, 72px); }
 
 .slot__photo {
-  width: clamp(28px, 10cqw, 52px);
-  height: clamp(28px, 10cqw, 52px);
+  width: clamp(12px, 10cqw, 52px);
+  height: clamp(12px, 10cqw, 52px);
 }
 
 .slot__placeholder {
-  width: clamp(24px, 8.6cqw, 46px);
-  height: clamp(24px, 8.6cqw, 46px);
-  font-size: clamp(8px, 2.2cqw, 11px);
+  width: clamp(11px, 8.6cqw, 46px);
+  height: clamp(11px, 8.6cqw, 46px);
+  font-size: clamp(6px, 2.2cqw, 11px);
 }
 
-.slot__initials { font-size: clamp(10px, 3.2cqw, 16px); }
+.slot__initials { font-size: clamp(6px, 3.2cqw, 16px); }
 
 .slot__name {
-  font-size: clamp(7px, 2.1cqw, 11px);
-  max-width: clamp(46px, 15cqw, 80px);
+  font-size: clamp(5px, 2.1cqw, 11px);
+  max-width: clamp(18px, 15cqw, 80px);
 }
 
 /* revealed slots become tappable (they are not just decoration) */
@@ -126,12 +134,12 @@
   position: absolute;
   top: -4px;
   right: -4px;
-  width: clamp(12px, 3.6cqw, 19px);
-  height: clamp(12px, 3.6cqw, 19px);
+  width: clamp(8px, 3.6cqw, 19px);
+  height: clamp(8px, 3.6cqw, 19px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(8px, 2.4cqw, 12px);
+  font-size: clamp(5px, 2.4cqw, 12px);
   font-style: normal;
   font-weight: 800;
   color: #0f1115;

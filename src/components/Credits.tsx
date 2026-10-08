@@ -41,22 +41,22 @@ export default function Credits({ isOpen, onClose }: Props) {
     <IonModal isOpen={isOpen} onDidDismiss={onClose} data-testid="credits-modal">
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Player photo credits</IonTitle>
-          <IonButton slot="end" fill="clear" onClick={onClose} aria-label="Close">
+          <IonTitle>Créditos das fotos</IonTitle>
+          <IonButton slot="end" fill="clear" onClick={onClose} aria-label="Fechar">
             <IonIcon slot="icon-only" icon={close} />
           </IonButton>
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
             value={query}
-            placeholder="Filter players"
+            placeholder="Filtrar jogadores"
             onIonInput={(e) => setQuery((e.detail.value ?? '') as string)}
           />
         </IonToolbar>
       </IonHeader>
       <IonContent className="credits">
         <p className="credits__note">{CREDITS._note}</p>
-        <p className="credits__count">{shown.length} of {entries.length} photos</p>
+        <p className="credits__count">{shown.length} de {entries.length} fotos</p>
         <IonList>
           {shown.map((e) => (
             <IonItem key={e.slug} href={e.source} target="_blank" rel="noreferrer">
@@ -64,7 +64,7 @@ export default function Credits({ isOpen, onClose }: Props) {
                 <h3>{e.name}</h3>
                 <IonNote>{e.slug}</IonNote>
               </IonLabel>
-              <IonNote slot="end">source ↗</IonNote>
+              <IonNote slot="end">fonte ↗</IonNote>
             </IonItem>
           ))}
         </IonList>

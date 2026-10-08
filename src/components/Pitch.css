@@ -1,13 +1,19 @@
 .pitch {
   position: relative;
-  width: 100%;
-  max-width: 460px;
+  /* fallback for browsers without container query units */
+  width: min(100%, 460px);
+  /* fit the width, the leftover *height* of the stage, and a max size:
+     68cqh is the widest this 68/100 pitch can be and still fit vertically */
+  width: min(100%, 68cqh, 460px);
   aspect-ratio: 68 / 100;
-  margin: 0 auto;
+  margin: 0;
   border-radius: 10px;
   overflow: hidden;
   background: #1f7a34;
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35);
+  /* the pitch is the container its slots size themselves against */
+  container-type: inline-size;
+  container-name: pitch;
 }
 
 .pitch__stripes {
@@ -68,9 +74,9 @@
 .pitch__end--top { top: 6px; }
 .pitch__end--bottom { bottom: 6px; }
 
-/* the pitch is the container its slots size themselves against */
-.pitch {
-  container-type: inline-size;
-  container-name: pitch;
-  max-width: 520px;
+/* Slots are positioned inside this inset layer. The layer keeps every photo
+   clear of the pitch edge (the pitch clips its overflow). */
+.pitch__slots {
+  position: absolute;
+  inset: 5% 2% 4% 2%;
 }

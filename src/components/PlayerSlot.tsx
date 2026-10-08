@@ -1,4 +1,5 @@
 import type { LineupPlayer } from '../types';
+import { slotLeft } from '../lib/pitch';
 import './PlayerSlot.css';
 
 interface Props {
@@ -31,7 +32,7 @@ export default function PlayerSlot({
       className={`slot ${revealed ? 'slot--revealed' : 'slot--hidden'} ${
         justRevealed ? 'slot--pop' : ''
       }`}
-      style={{ left: `${player.x}%`, top: `${100 - player.y}%` }}
+      style={{ left: `${slotLeft(player.x)}%`, top: `${100 - player.y}%` }}
       data-testid={`slot-${player.name}`}
     >
       {revealed ? (
@@ -51,7 +52,7 @@ export default function PlayerSlot({
           <span className="slot__name">{player.name}</span>
         </button>
       ) : (
-        <div className="slot__placeholder" title={hint ? 'Hint: first letter' : 'Unknown player'}>
+        <div className="slot__placeholder" title={hint ? 'Dica: primeira letra' : 'Jogador desconhecido'}>
           <span>{player.position}</span>
           {hint && <em className="slot__hint">{player.name[0].toUpperCase()}</em>}
         </div>

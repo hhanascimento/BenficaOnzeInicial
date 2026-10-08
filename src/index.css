@@ -5,16 +5,35 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
   background: #0f1115;
   color: #e7ebf1;
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
 }
 
-#root {
-  width: 100%;
-  min-height: 100%;
+/* ---- app shell ------------------------------------------------------
+   The game is a fixed-height shell: the page itself never scrolls, the
+   pitch takes whatever height is left between the fixed header, cards
+   and footer (see .pitchStage in App.css). */
+#root,
+ion-app {
+  height: 100%;
+}
+
+ion-app {
+  display: flex;
+  flex-direction: column;
+}
+
+ion-header,
+ion-footer {
+  flex: 0 0 auto;
 }
 
 ion-content.game {
   --background: #0f1115;
+  /* fill the space left between header and footer rather than 100% of the app */
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }

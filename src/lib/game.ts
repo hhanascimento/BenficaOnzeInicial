@@ -171,6 +171,32 @@ export function formatTime(totalSeconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
+/** Short, human date for a match (e.g. "4 May 1961"). */
+export function formatDate(iso: string): string {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString('pt-PT', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  });
+}
+
+/**
+ * Play order. `size` matches are played in a random order: the returned deck is
+ * a shuffled list of match indices that the game walks from start to finish, so
+ * nothing repeats until every match has been played once — then it is reshuffled.
+ * `avoidFirst` (pass the match just played) keeps the wrap-around from repeating
+ * the previous match straight away.
+ */
+export function shuffleDeck(size: number, avoidFirst = -1): number[] {
+  const deck = Array.from({ length: size }, (_, i) => i);
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  if (deck.length > 1 && deck[0] === avoidFirst) {
+    [deck[0], deck[1]] = [deck[1], deck[0]];
+  }
+  return deck;
+}
+
 export function difficultyLabel(stars: number): string {
-  return ['', 'Casual', 'Familiar', 'Tricky', 'Deep cut', 'Obscure'][stars] ?? 'Tricky';
+  return ['', 'Fácil', 'Acessível', 'Intermédio', 'Difícil', 'Muito difícil'][stars] ?? 'Intermédio';
 }

@@ -7,9 +7,10 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Match } from '../src/types.ts';
 import { matchesPlayer, normalize as normalizeName } from '../src/lib/text.ts';
+import { slotLeft, X_SCALE } from '../src/lib/pitch.ts';
 import {
   playerFrequency, maxAverageFrequency, matchDifficulty,
-  scoreRound, applyResult, formatTime, EMPTY_STATS, DEFAULT_SETTINGS,
+  scoreRound, applyResult, formatTime, EMPTY_STATS, DEFAULT_SETTINGS, shuffleDeck,
 } from '../src/lib/game.ts';
 
 const root = resolve(import.meta.dirname, '..');
@@ -58,6 +59,33 @@ for (const m of matches) {
     check(`${tag}/${p.name}: has name`, !!p.name.trim());
   }
 }
+/* ---------------- pitch coordinates ----------------
+   The source grid is 80 units wide (every XI is symmetric about x = 40), and
+   PlayerSlot stretches it onto the full 0-100% width of the rendered pitch. */
+section('pitch coordinates');
+check('source grid: no x beyond 80', matches.every((m) => m.lineup.every((p) => p.x <= 80)));
+
+let mirroredCount = 0;
+let coordCount = 0;
+for (const m of matches) {
+  const xs = m.lineup.map((p) => p.x);
+  for (const x of xs) {
+    coordCount++;
+    if (xs.some((v) => Math.abs(v - (80 - x)) <= 0.75)) mirroredCount++;
+  }
+}
+check('source grid: XIs symmetric about x = 40',
+  mirroredCount / coordCount > 0.98, `${mirroredCount}/${coordCount}`);
+
+check('mapping: centre of the grid lands mid-pitch', slotLeft(40) === 50, String(slotLeft(40)));
+check('mapping: widest source x reaches the far side', slotLeft(73) > 85, String(slotLeft(73)));
+check('mapping: narrowest source x stays on the pitch', slotLeft(7) < 15 && slotLeft(7) > 2, String(slotLeft(7)));
+check('mapping: never leaves 2-98%', matches.every((m) => m.lineup.every((p) => {
+  const v = slotLeft(p.x);
+  return v >= 2 && v <= 98;
+})));
+check('mapping scale is 100/80', X_SCALE === 1.25, String(X_SCALE));
+
 check('date range spans 1960s onward', oldest < '1965-01-01', `oldest ${oldest}`);
 console.log(`  date range: ${oldest} → ${newest}`);
 
@@ -161,6 +189,42 @@ check('solved count ignores unfinished rounds', afterPartial.solved === 2);
 check('total score accumulates',
   afterPartial.totalScore === twice.totalScore + partial.points,
   `${afterPartial.totalScore} vs ${twice.totalScore + partial.points}`);
+
+section('play order');
+const deck = shuffleDeck(matches.length);
+check('deck holds every match exactly once', deck.length === matches.length && new Set(deck).size === matches.length);
+check('deck only holds valid indices',
+  deck.every((i) => Number.isInteger(i) && i >= 0 && i < matches.length), String(deck.length));
+check('deck is shuffled rather than in dataset order', deck.some((v, i) => v !== i));
+check('two decks are not identical',
+  shuffleDeck(matches.length).join() !== shuffleDeck(matches.length).join());
+
+// the deck is walked one match at a time, exactly like nextMatch() does, and the
+// wrap-around must reshuffle instead of restarting at match 0
+let pass = shuffleDeck(matches.length);
+let pos = 0;
+const seen = new Set([pass[0]]);
+let wrappedWithRepeat = 0;
+for (let n = 1; n < matches.length; n++) {
+  const lastPlayed = pass[pos];
+  if (pos + 1 < pass.length) {
+    pos += 1;
+  } else {
+    pass = shuffleDeck(matches.length, lastPlayed);
+    pos = 0;
+    if (pass[0] === lastPlayed) wrappedWithRepeat += 1;
+  }
+  seen.add(pass[pos]);
+}
+check('one full pass plays every match exactly once',
+  seen.size === matches.length, `${seen.size}/${matches.length}`);
+
+// the avoidFirst guard is probabilistic, so hammer it
+let badFirst = 0;
+for (let n = 0; n < 300; n++) if (shuffleDeck(matches.length, 17)[0] === 17) badFirst += 1;
+check('never returns the just-played match first', badFirst === 0, `${badFirst}/300`);
+check('wrap-around never repeats the previous match', wrappedWithRepeat === 0, String(wrappedWithRepeat));
+check('tiny decks are safe', JSON.stringify(shuffleDeck(1, 0)) === '[0]' && JSON.stringify(shuffleDeck(0)) === '[]');
 
 section('misc');
 check('formatTime mm:ss', formatTime(0) === '00:00' && formatTime(65) === '01:05' && formatTime(3600) === '60:00');
