@@ -6,7 +6,11 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Match } from '../src/types.ts';
-import { matchesPlayer, normalize as normalizeName } from '../src/lib/text.ts';
+import {
+  aliasHit, buildPool, knownFrom, matchesPlayer, matchesQuery, nameFromSlug,
+  normalize as normalizeName,
+} from '../src/lib/text.ts';
+import type { KnownPlayer } from '../src/lib/text.ts';
 import { slotLeft, X_SCALE } from '../src/lib/pitch.ts';
 import {
   playerFrequency, maxAverageFrequency, matchDifficulty,
@@ -30,7 +34,12 @@ function section(title: string) {
 }
 
 const matches = JSON.parse(readFileSync(resolve(root, 'src/data/matches.json'), 'utf8')) as Match[];
-const POSITIONS = new Set(['GK', 'RB', 'CB', 'LB', 'DM', 'CM', 'AM', 'RW', 'LW', 'ST']);
+/* Both vocabularies: the English codes of the original dataset and the general
+   Portuguese roles the localized dataset carries (see PositionCode). */
+const POSITIONS = new Set([
+  'GK', 'RB', 'CB', 'LB', 'DM', 'CM', 'AM', 'RW', 'LW', 'ST',
+  'GR', 'DF', 'MC', 'AV',
+]);
 
 /* ---------------- dataset ---------------- */
 section(`dataset (${matches.length} matches)`);
@@ -116,32 +125,232 @@ for (const [slug, c] of Object.entries(credits.players)) {
 
 /* ---------------- name matching ---------------- */
 section('name matching');
-const pool = Array.from(players).sort();
-check('exact name', matchesPlayer('Eusébio', 'Eusébio', pool));
-check('accent-insensitive', matchesPlayer('eusebio', 'Eusébio', pool));
-check('case-insensitive', matchesPlayer('COLUNA', 'Mário Coluna', pool));
-check('extra spaces', matchesPlayer('  di   maria ', 'Ángel Di María', pool));
-check('unique surname', matchesPlayer('Grimaldo', 'Alejandro Grimaldo', pool));
+const pool = buildPool(matches);
+const target = (name: string): KnownPlayer =>
+  pool.find((p) => normalizeName(p.name) === normalizeName(name)) ?? { name };
+const eusebio = target('Eusébio');
+
+check('exact name', matchesPlayer('Eusébio', eusebio, pool));
+check('accent-insensitive', matchesPlayer('eusebio', eusebio, pool));
+check('case-insensitive', matchesPlayer('COLUNA', target('Mário Coluna'), pool));
+check('extra spaces', matchesPlayer('  di   maria ', target('Di María'), pool));
+check('unique surname', matchesPlayer('Grimaldo', target('Grimaldo'), pool));
+check('empty guess rejected', !matchesPlayer('   ', eusebio, pool));
+check('non-player rejected', !matchesPlayer('Lionel Messi', eusebio, pool));
+check('wrong surname rejected', !matchesPlayer('Ronaldo', eusebio, pool));
+
 // find a surname shared by two different players in the dataset
 const surnameOwners = new Map<string, string[]>();
-for (const n of pool) {
-  const parts = n.split(' ');
+for (const p of pool) {
+  const parts = p.name.split(' ');
   const last = parts[parts.length - 1];
   if (!last) continue;
-  surnameOwners.set(last, [...(surnameOwners.get(last) ?? []), n]);
+  surnameOwners.set(last, [...(surnameOwners.get(last) ?? []), p.name]);
 }
 const shared = [...surnameOwners.entries()].find(
   ([, owners]) => new Set(owners.map((o) => normalizeName(o))).size > 1,
 );
 if (shared) {
-  check(`ambiguous surname rejected (${shared[0]})`, !matchesPlayer(shared[0], shared[1][0], pool));
+  check(`ambiguous surname rejected (${shared[0]})`,
+    !matchesPlayer(shared[0], target(shared[1][0]), pool));
   console.log(`  ambiguous surname example: ${shared[0]} → ${shared[1].join(', ')}`);
 } else {
   console.log('  no ambiguous surname in dataset (nothing to assert)');
 }
-check('empty guess rejected', !matchesPlayer('   ', 'Eusébio', pool));
-check('non-player rejected', !matchesPlayer('Lionel Messi', 'Eusébio', pool));
-check('wrong surname rejected', !matchesPlayer('Ronaldo', 'Eusébio', pool));
+
+/* A first + last name identifies the player even when the full name carries
+   words in between ("mehdi gonzalez" → "Mehdi Carcela Gonzalez"), and word
+   order does not matter ("costa rui" → "Rui Costa"). Sweep the whole pool. */
+const firstLastFailures: string[] = [];
+const reversedFailures: string[] = [];
+for (const p of pool) {
+  const words = p.name.split(/\s+/);
+  if (words.length >= 3 && !matchesPlayer(`${words[0]} ${words[words.length - 1]}`, p, pool)) {
+    firstLastFailures.push(`${words[0]} ${words[words.length - 1]} → ${p.name}`);
+  }
+  const reversed = [...words].reverse().join(' ');
+  if (words.length >= 2 && !matchesPlayer(reversed, p, pool)) {
+    reversedFailures.push(`${reversed} → ${p.name}`);
+  }
+}
+check('first + last name matches every multi-word name',
+  firstLastFailures.length === 0, firstLastFailures.slice(0, 3).join(' | '));
+check('word order does not matter', reversedFailures.length === 0, reversedFailures.slice(0, 3).join(' | '));
+
+/* The slug holds the first name the display name leaves out, so every alias it
+   produces must identify the player on its own and by its own first + last. */
+const aliased = pool.filter((p) => (p.aliases ?? []).length > 0);
+check('the slugs contribute aliases', aliased.length > 150, `${aliased.length} players`);
+const aliasFailures: string[] = [];
+const aliasFirstLastFailures: string[] = [];
+for (const p of aliased) {
+  for (const alias of p.aliases ?? []) {
+    if (!matchesPlayer(alias, p, pool)) aliasFailures.push(`${alias} → ${p.name}`);
+    const words = alias.split(/\s+/);
+    if (words.length >= 3 && !matchesPlayer(`${words[0]} ${words[words.length - 1]}`, p, pool)) {
+      aliasFirstLastFailures.push(`${words[0]} ${words[words.length - 1]} → ${p.name}`);
+    }
+  }
+}
+check('every alias identifies its player', aliasFailures.length === 0, aliasFailures.slice(0, 3).join(' | '));
+check('first + last of an alias works too',
+  aliasFirstLastFailures.length === 0, aliasFirstLastFailures.slice(0, 3).join(' | '));
+check('slug reads as a name', nameFromSlug('alejandro-grimaldo') === 'Alejandro Grimaldo',
+  nameFromSlug('alejandro-grimaldo'));
+check('alias names the right player', matchesPlayer('Alejandro Grimaldo', target('Grimaldo'), pool));
+// Two players answer to "Alejandro", so the first name alone must not pick one:
+// the first + last form is what disambiguates them.
+check('a shared first name stays ambiguous',
+  !matchesPlayer('alejandro', target('Escalona'), pool)
+  && !matchesPlayer('alejandro', target('Grimaldo'), pool));
+check('first + last clears that ambiguity',
+  matchesPlayer('alejandro escalona', target('Escalona'), pool)
+  && matchesPlayer('alejandro grimaldo', target('Grimaldo'), pool));
+check('a first name only one player has is enough',
+  matchesPlayer('abdelkrim', target('El Hadrioui'), pool));
+
+/* Every displayed name must be guessable by itself. Aliases feed the pool too,
+   so a word another player's alias carries ("nelson-semedo" → "Nelson Semedo")
+   made the ambiguity rule refuse the very player the slot names: "Nélson". */
+const unguessable = pool.filter((p) => !matchesPlayer(p.name, p, pool)).map((p) => p.name);
+check('every player answers to their own displayed name', unguessable.length === 0,
+  `${unguessable.length}: ${unguessable.slice(0, 5).join(', ')}`);
+check('the word a longer alias shares still finds its own player',
+  matchesPlayer('Nélson', target('Nélson'), pool)
+  && matchesPlayer('nélson', target('Nélson'), pool));
+
+/* 15 display names in the dataset belong to more than one real player, so the
+   alias has to come from the lineup entry's own slug, not from the merged pool
+   entry – otherwise "Angelo Martins" would reveal whichever Martins is on the
+   pitch. */
+const sharedSlugs = new Map<string, { name: string; slug?: string }[]>();
+for (const m of matches) {
+  for (const p of m.lineup) sharedSlugs.set(p.name, [...(sharedSlugs.get(p.name) ?? []), p]);
+}
+const crossCheck = [...sharedSlugs.values()].filter(
+  (group) => new Set(group.map((p) => p.slug)).size > 1,
+);
+check('the dataset really does reuse display names', crossCheck.length > 5, `${crossCheck.length} names`);
+let crossFailures = 0;
+let checkedPairs = 0;
+for (const group of crossCheck) {
+  for (const a of group) {
+    const aliasA = knownFrom(a).aliases?.[0];
+    if (!aliasA) continue;
+    for (const b of group) {
+      if (b === a || b.slug === a.slug) continue;
+      checkedPairs++;
+      if (matchesPlayer(aliasA, knownFrom(b), pool)) crossFailures++;
+    }
+  }
+}
+check('a shared display name keeps the first name of its own entry',
+  crossFailures === 0, `${crossFailures}/${checkedPairs} pairs cross-matched`);
+console.log(`  ${checkedPairs} same-name pairings checked (${crossCheck.length} shared names)`);
+
+/* Suggestion filter: same idea while the player is still typing. */
+const drafted = (q: string) => pool.filter((p) => matchesQuery(p, q)).map((p) => p.name);
+check('suggestion: prefix of a surname', drafted('grimal').includes('Grimaldo'), drafted('grimal').join(','));
+check('suggestion: first name from the slug', drafted('alejandro').includes('Grimaldo'), drafted('alejandro').join(','));
+check('suggestion: first + last, middle words skipped',
+  drafted('mehdi gonzalez').includes('Mehdi Carcela Gonzalez'), drafted('mehdi gonzalez').join(','));
+check('suggestion: mid-word typing still works', drafted('osta').includes('Costa Pereira'), drafted('osta').join(','));
+check('suggestion: explains a slug hit', aliasHit(target('Grimaldo'), 'alejandro') === 'Alejandro Grimaldo',
+  String(aliasHit(target('Grimaldo'), 'alejandro')));
+check('suggestion: no alias note for the display name',
+  aliasHit(target('Grimaldo'), 'grimaldo') === null);
+
+/* ---------------- slot size ----------------
+   The circles are sized in `cqw` (percent of the pitch width) so they scale
+   with the pitch. The pitch cannot grow – it is capped by the viewport height –
+   so making the slots bigger means using more of the pitch, and the ceiling is
+   how close two players can stand. The CSS is parsed rather than trusted: the
+   widest circle must stay clear of the tightest pair in any XI, and must not
+   reach past the pitch edge at the narrowest pitch either.
+*/
+section('slot size');
+const slotCss = readFileSync(resolve(root, 'src/components/PlayerSlot.css'), 'utf8');
+const pitchCss = readFileSync(resolve(root, 'src/components/Pitch.css'), 'utf8');
+
+function rule(css: string, selector: string): string {
+  const esc = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const m = new RegExp(`${esc}\\s*\\{([\\s\\S]*?)\\}`).exec(css);
+  if (!m) throw new Error(`rule not found in CSS: ${selector}`);
+  return m[1];
+}
+
+/** The fluid `clamp(<min px>, <n>cqw, <max px>)` size of a slot part. */
+function fluidSize(css: string, selector: string): { cqw: number; maxPx: number } {
+  const esc = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const m of css.matchAll(new RegExp(`${esc}\\s*\\{([\\s\\S]*?)\\}`, 'g'))) {
+    const hit = /clamp\(\s*[\d.]+px\s*,\s*([\d.]+)cqw\s*,\s*([\d.]+)px\s*\)/.exec(m[1]);
+    if (hit) return { cqw: Number(hit[1]), maxPx: Number(hit[2]) };
+  }
+  throw new Error(`no clamp(<px>, <cqw>, <px>) size for ${selector}`);
+}
+
+const photo = fluidSize(slotCss, '.slot__photo');
+const placeholder = fluidSize(slotCss, '.slot__placeholder');
+check('slots are sized against the pitch width', photo.cqw > 0 && placeholder.cqw > 0);
+check('a placeholder is no bigger than a photo',
+  placeholder.cqw <= photo.cqw && placeholder.maxPx <= photo.maxPx,
+  `placeholder ${placeholder.cqw}cqw vs photo ${photo.cqw}cqw`);
+
+// pitch geometry, read from the CSS so a change there shows up here
+const pitchRule = rule(pitchCss, '.pitch');
+const aspect = /aspect-ratio:\s*([\d.]+)\s*\/\s*([\d.]+)/.exec(pitchRule);
+const capMatch = /width:\s*min\(([^)]*)\)/.exec(pitchRule)?.[1].match(/(\d+)px/);
+const insets = rule(pitchCss, '.pitch__slots').match(/inset:\s*([^;]+)/)?.[1].split(/\s+/).map(parseFloat);
+if (!aspect || !insets || insets.length !== 4 || !capMatch) {
+  throw new Error('could not read the pitch geometry out of Pitch.css');
+}
+const [aspectW, aspectH] = aspect.slice(1).map(Number);
+const hPerW = aspectH / aspectW;                       // pitch height, in pitch widths
+const [insetTop, insetRight, insetBottom, insetLeft] = insets;
+const layerW = 1 - (insetLeft + insetRight) / 100;     // the slot layer's share of the pitch
+const layerH = 1 - (insetTop + insetBottom) / 100;
+const maxPitch = Number(capMatch[1]);
+
+// tightest pair of players in the whole dataset, plus the closest a slot centre
+// ever comes to an edge – both in units of the pitch width
+let tightest = Infinity;
+let tightestTag = '';
+let minEdgeX = Infinity;
+let minEdgeY = Infinity;
+for (const m of matches) {
+  const lefts = m.lineup.map((p) => slotLeft(p.x));
+  for (let i = 0; i < m.lineup.length; i++) {
+    minEdgeX = Math.min(minEdgeX,
+      insetLeft / 100 + (lefts[i] / 100) * layerW,
+      insetRight / 100 + ((100 - lefts[i]) / 100) * layerW);
+    const top = (100 - m.lineup[i].y) / 100;
+    minEdgeY = Math.min(minEdgeY,
+      hPerW * (insetTop / 100 + top * layerH),
+      hPerW * (insetBottom / 100 + (1 - top) * layerH));
+    for (let j = i + 1; j < m.lineup.length; j++) {
+      const dx = ((lefts[i] - lefts[j]) / 100) * layerW;
+      const dy = ((m.lineup[i].y - m.lineup[j].y) / 100) * layerH * hPerW;
+      const gap = Math.hypot(dx, dy);
+      if (gap < tightest) {
+        tightest = gap;
+        tightestTag = `${m.lineup[i].name} / ${m.lineup[j].name}`;
+      }
+    }
+  }
+}
+
+check('a photo fits between the closest two players in any XI',
+  photo.cqw / 100 < tightest,
+  `${photo.cqw}cqw vs closest pair ${tightest.toFixed(4)} of the pitch width (${tightestTag})`);
+check('the pixel cap keeps that spacing even at the widest pitch',
+  photo.maxPx < maxPitch * tightest, `${photo.maxPx}px vs ${(maxPitch * tightest).toFixed(1)}px`);
+check('a photo stays inside the pitch horizontally',
+  photo.cqw / 200 < minEdgeX, `radius ${(photo.cqw / 200).toFixed(4)} vs ${minEdgeX.toFixed(4)}`);
+check('a photo stays inside the pitch vertically',
+  photo.cqw / 200 < minEdgeY, `radius ${(photo.cqw / 200).toFixed(4)} vs ${minEdgeY.toFixed(4)}`);
+check('the pitch has a sane size cap', maxPitch >= 300 && maxPitch <= 560, `${maxPitch}px`);
+console.log(`  photo ${photo.cqw}cqw / max ${photo.maxPx}px, placeholder ${placeholder.cqw}cqw`
+  + ` — closest pair ${tightest.toFixed(4)} of the pitch width (${tightestTag})`);
 
 /* ---------------- difficulty ---------------- */
 section('difficulty');

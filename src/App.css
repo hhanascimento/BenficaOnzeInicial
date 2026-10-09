@@ -38,6 +38,42 @@ ion-footer ion-toolbar {
   container-type: size;
 }
 
+/* ---------- wide, landscape screens: pitch and cards side by side ----------
+   The column above is capped at 560px, so on a desktop window most of the width
+   went unused while the pitch stayed small – it can only be as big as the
+   *height* the other cards leave behind. Two columns give the pitch the whole
+   content height instead, which is what makes every slot bigger (the slots are
+   a share of the pitch). Nothing scrolls: the pitch still fits itself to
+   `68cqh` of the stage (see Pitch.css) and the cards move to a side rail. */
+@media (min-width: 760px) and (min-aspect-ratio: 1 / 1) {
+  .pitchWrap {
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 18px;
+    row-gap: 10px;
+  }
+
+  /* the pitch spans every row, so the stage gets the full content height */
+  .pitchStage {
+    grid-column: 1;
+    grid-row: 1 / -1;
+  }
+
+  .match,
+  .settings,
+  .controls {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .match { grid-row: 1; }
+  .settings { grid-row: 2; }
+  /* the rail card keeps its natural height instead of stretching the row */
+  .controls { grid-row: 3 / -1; align-self: start; }
+}
+
 .match,
 .settings,
 .controls { flex: 0 0 auto; }
@@ -214,7 +250,9 @@ ion-footer ion-toolbar {
 }
 
 .suggest li button {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
   width: 100%;
   text-align: left;
   padding: 8px 10px;
@@ -224,6 +262,16 @@ ion-footer ion-toolbar {
   border: 0;
   border-radius: 6px;
   cursor: pointer;
+}
+
+/* the fuller name from the slug, shown when it is what matched the query */
+.suggest__alias {
+  margin-left: auto;
+  font-size: 11px;
+  color: #8b95a3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .suggest li button:hover,

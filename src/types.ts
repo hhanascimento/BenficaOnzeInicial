@@ -1,8 +1,15 @@
+/**
+ * Position as printed on the slot. Two vocabularies are in use: the English
+ * codes of the original dataset and the general Portuguese roles the localized
+ * dataset carries (GR = guarda-redes, DF = defesa, MC = meio-campista,
+ * AV = avançado), so both spellings are valid.
+ */
 export type PositionCode =
   | 'GK'
   | 'RB' | 'CB' | 'LB'
   | 'DM' | 'CM' | 'AM'
-  | 'RW' | 'LW' | 'ST';
+  | 'RW' | 'LW' | 'ST'
+  | 'GR' | 'DF' | 'MC' | 'AV';
 
 export interface LineupPlayer {
   /** Display name, short form used in the game (e.g. "Coluna"). */
@@ -21,6 +28,12 @@ export interface LineupPlayer {
   photo?: string;
   /** Optional shirt number. */
   number?: number;
+  /**
+   * Source page slug (e.g. "alejandro-grimaldo", "joao-manuel-pinto"). It is
+   * not shown during play: `buildPool` turns it into an alternate name so a
+   * first + last name guess also identifies the player.
+   */
+  slug?: string;
 }
 
 export interface Match {

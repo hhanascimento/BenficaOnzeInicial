@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { LineupPlayer } from '../types';
 import { slotLeft } from '../lib/pitch';
 import './PlayerSlot.css';
@@ -21,6 +22,12 @@ export default function PlayerSlot({
   active,
   onClick,
 }: Props) {
+  /* The dataset can reference a photo that is not in the repo (a slug with no
+     file next to it). A broken image icon would spoil the pitch, so a failed
+     load falls back to the initials, exactly like a player with no photo. */
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const showPhoto = !!player.photo && !photoFailed;
+
   const initials = player.name
     .split(' ')
     .map((w) => w[0])
@@ -43,8 +50,13 @@ export default function PlayerSlot({
           aria-label={`${player.name}, ${player.position}`}
         >
           <span className={`slot__photo ${active ? 'slot__photo--active' : ''}`}>
-            {player.photo ? (
-              <img src={player.photo} alt={player.name} loading="lazy" />
+            {showPhoto ? (
+              <img
+                src={player.photo}
+                alt={player.name}
+                loading="lazy"
+                onError={() => setPhotoFailed(true)}
+              />
             ) : (
               <span className="slot__initials">{initials}</span>
             )}

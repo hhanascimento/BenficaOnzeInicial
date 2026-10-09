@@ -1,10 +1,10 @@
 .pitch {
   position: relative;
   /* fallback for browsers without container query units */
-  width: min(100%, 460px);
+  width: min(100%, 560px);
   /* fit the width, the leftover *height* of the stage, and a max size:
      68cqh is the widest this 68/100 pitch can be and still fit vertically */
-  width: min(100%, 68cqh, 460px);
+  width: min(100%, 68cqh, 560px);
   aspect-ratio: 68 / 100;
   margin: 0;
   border-radius: 10px;

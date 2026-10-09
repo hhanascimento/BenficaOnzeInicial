@@ -8,12 +8,15 @@ import {
   flame, trophy, bulb, star, flash, lockClosed, close, informationCircle, shuffle,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import type { Match } from './types';
+import type { LineupPlayer, Match } from './types';
 import matchesData from './data/matches.json';
 import Pitch from './components/Pitch';
 import Summary from './components/Summary';
 import Credits from './components/Credits';
-import { matchesPlayer, normalize } from './lib/text';
+import {
+  aliasHit, buildPool, knownFrom, matchesPlayer, matchesQuery, normalize,
+} from './lib/text';
+import type { KnownPlayer } from './lib/text';
 import {
   loadSettings, saveSettings, loadStats, saveStats,
   playerFrequency, maxAverageFrequency, matchDifficulty,
@@ -29,8 +32,19 @@ addIcons({
 
 const MATCHES = matchesData as unknown as Match[];
 
-/** Every player who appears anywhere in the dataset – used for suggestions and uniqueness. */
-const POOL = Array.from(new Set(MATCHES.flatMap((m) => m.lineup.map((p) => p.name)))).sort();
+/**
+ * Every player who appears anywhere in the dataset – used for suggestions and
+ * uniqueness. Each entry also carries the alternate name its slug holds, so a
+ * first + last name finds a slot that is shown as a surname alone.
+ */
+const POOL: KnownPlayer[] = buildPool(MATCHES);
+
+/**
+ * The name rules for one player on the pitch. The alias comes from that
+ * player's own slug (see `knownFrom`), so two different players who share a
+ * display name in the dataset ("Martins", "Silva") keep their own first name.
+ */
+const knownOf = (p: LineupPlayer): KnownPlayer => knownFrom(p);
 
 /* Difficulty is dataset-wide, so it is computed once. */
 const FREQ = playerFrequency(MATCHES);
@@ -104,7 +118,7 @@ export default function App() {
   const suggestions = useMemo(() => {
     const q = normalize(guess);
     if (settings.hard || q.length < 2 || finished) return [];
-    return POOL.filter((n) => normalize(n).startsWith(q) || normalize(n).includes(q)).slice(0, 6);
+    return POOL.filter((n) => matchesQuery(n, q)).slice(0, 6);
   }, [guess, finished, settings.hard]);
 
   const foundNames = useMemo(
@@ -164,7 +178,7 @@ export default function App() {
     if (!value) return;
 
     const target = match.lineup.findIndex(
-      (p, i) => !revealed.has(i) && matchesPlayer(value, p.name, POOL),
+      (p, i) => !revealed.has(i) && matchesPlayer(value, knownOf(p), POOL),
     );
 
     if (target >= 0) {
@@ -197,7 +211,7 @@ export default function App() {
       setActiveIdx((i) => (i - 1 + suggestions.length) % suggestions.length);
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (activeIdx >= 0 && suggestions[activeIdx]) submitGuess(suggestions[activeIdx]);
+      if (activeIdx >= 0 && suggestions[activeIdx]) submitGuess(suggestions[activeIdx].name);
       else submitGuess(guess);
     } else if (e.key === 'Escape') {
       setActiveIdx(-1);
@@ -361,18 +375,25 @@ export default function App() {
                     )}
                     {suggestions.length > 0 && (
                       <ul className="suggest" data-testid="suggestions">
-                        {suggestions.map((n, i) => (
-                          <li key={n}>
-                            <button
-                              type="button"
-                              className={i === activeIdx ? 'is-active' : ''}
-                              onMouseEnter={() => setActiveIdx(i)}
-                              onClick={() => submitGuess(n)}
-                            >
-                              {n}
-                            </button>
-                          </li>
-                        ))}
+                        {suggestions.map((p, i) => {
+                          // when the hit comes from the slug's fuller name, say so –
+                          // otherwise the list looks like it is offering a stranger
+                          const alias = aliasHit(p, guess);
+                          return (
+                            <li key={p.name}>
+                              <button
+                                type="button"
+                                data-name={p.name}
+                                className={i === activeIdx ? 'is-active' : ''}
+                                onMouseEnter={() => setActiveIdx(i)}
+                                onClick={() => submitGuess(p.name)}
+                              >
+                                <span className="suggest__name">{p.name}</span>
+                                {alias && <span className="suggest__alias">{alias}</span>}
+                              </button>
+                            </li>
+                          );
+                        })}
                       </ul>
                     )}
                   </div>

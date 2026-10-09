@@ -90,29 +90,39 @@
 }
 
 .slot__lock {
-  font-size: clamp(6px, 3cqw, 15px);
+  font-size: clamp(6px, 3.3cqw, 19px);
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* ---------- fluid sizing: slots scale with the pitch container ---------- */
-.slot { width: clamp(18px, 14cqw, 72px); }
+/* ---------- fluid sizing: slots scale with the pitch container ---------- *
+ * The pitch is as tall as the viewport allows, so the circles cannot grow the
+ * pitch – they just take a bigger share of it. The ceiling is how close two
+ * players can stand: 16.06% of the pitch width in the tightest XI of the whole
+ * dataset (tools/verify.ts recomputes it from the coordinates). 15.2cqw sits
+ * just under that, ~95% of the limit, which is as large as the photos can get
+ * before they touch in that XI.                                        */
+.slot { width: clamp(20px, 19.5cqw, 104px); }
 
 .slot__photo {
-  width: clamp(12px, 10cqw, 52px);
-  height: clamp(12px, 10cqw, 52px);
+  width: clamp(16px, 15.2cqw, 88px);
+  height: clamp(16px, 15.2cqw, 88px);
 }
 
+/* the empty slot is the positioning context for the hint badge: a badge hung off
+   the slot box stuck out of the pitch for a player near the touchline (the box
+   is wider than the circle), one inside the circle's own box never can */
 .slot__placeholder {
-  width: clamp(11px, 8.6cqw, 46px);
-  height: clamp(11px, 8.6cqw, 46px);
-  font-size: clamp(6px, 2.2cqw, 11px);
+  position: relative;
+  width: clamp(13px, 13.6cqw, 78px);
+  height: clamp(13px, 13.6cqw, 78px);
+  font-size: clamp(7px, 3.4cqw, 18px);
 }
 
-.slot__initials { font-size: clamp(6px, 3.2cqw, 16px); }
+.slot__initials { font-size: clamp(7px, 5cqw, 30px); }
 
 .slot__name {
-  font-size: clamp(5px, 2.1cqw, 11px);
-  max-width: clamp(18px, 15cqw, 80px);
+  font-size: clamp(6px, 2.6cqw, 12px);
+  max-width: clamp(22px, 18cqw, 92px);
 }
 
 /* revealed slots become tappable (they are not just decoration) */
@@ -132,14 +142,14 @@
 
 .slot__hint {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: clamp(8px, 3.6cqw, 19px);
-  height: clamp(8px, 3.6cqw, 19px);
+  top: 0;
+  right: 0;
+  width: clamp(9px, 4.6cqw, 28px);
+  height: clamp(9px, 4.6cqw, 28px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(5px, 2.4cqw, 12px);
+  font-size: clamp(5px, 3.2cqw, 16px);
   font-style: normal;
   font-weight: 800;
   color: #0f1115;

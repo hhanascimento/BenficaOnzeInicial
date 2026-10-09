@@ -14,6 +14,7 @@ npm run dev   # http://localhost:3000
 npm run build # typecheck (tsc -b) + production build
 npm run lint  # oxlint
 npm test      # data + photo + rules checks (node tools/verify.ts)
+npm run layout # no-scroll layout check in a headless browser (needs playwright)
 ```
 
 ## How the game works
@@ -53,8 +54,43 @@ Toggleable in-game and remembered between sessions:
 - A wrong-but-known player reports "already found / not in this XI"; an unknown name shakes the
   field. Matching ignores accents, case and extra spaces; a bare surname is accepted only when
   no other player shares it.
-- The pitch scales with its container (container queries), so the front line never crowds on a
-  narrow phone.
+- The pitch scales with its container (container queries). Suggestions open **upwards** because
+  the guess field sits at the bottom of the screen.
+
+## Layout — the whole game fits one screen
+
+Nothing scrolls: the header, the match card, the mode toggles, the controls card and the footer
+keep their natural height and the **pitch takes what is left**.
+
+- `ion-app` is a `100 %`-tall flex column; `ion-content` is the flexible middle part, so the
+  content box has a definite height and `.pitchWrap` can be `height: 100%`.
+- `.pitchWrap` is a flex column too: `.pitchStage` is the only child with `flex: 1 1 auto`, and it
+  is a `container-type: size`. The pitch is therefore sized from the space that is actually left:
+
+  ```css
+  .pitch { width: min(100%, 68cqh, 460px); aspect-ratio: 68 / 100; }
+  ```
+
+  `68cqh` is the widest this 68 × 100 pitch can be and still fit vertically, so it shrinks on a
+  short window and stays centred instead of pushing the controls off-screen.
+- Slots live in `.pitch__slots`, an inset layer (`inset: 5% 2% 4% 2%`), and the slot box is the
+  **photo circle** — the name hangs below it as an absolutely positioned chip. So the circle sits
+  exactly on the pitch coordinate and is never cut by the pitch edge.
+- **Coordinate note:** the source lineups all share one grid — every XI is symmetric about
+  `x = 40` and no `x` exceeds 80 (the goalkeeper is on `x = 40` in all 288 matches), i.e. the
+  positions are given on an 80-unit-wide pitch. `src/lib/pitch.ts` stretches that onto the full
+  width (`x × 1.25`), otherwise every formation would sit squashed into the left of the field.
+- Short screens get a tighter chrome (smaller cards, no difficulty stars under 660 px) and, under
+  520 px, the toggles and footer step aside. Once the round is over the match card and toggles are
+  replaced by the summary (which repeats the fixture), so the pitch stays readable in the recap.
+- The autocomplete list opens upwards, otherwise it would fall off the bottom and create a
+  scrollbar.
+
+`tools/layout-check.mjs` drives the real app in headless Chromium at 11 viewport sizes × 5 game
+states (start, suggestions open, wrong guess, right guess, round finished) and fails if any
+scroller overflows, if a photo is clipped by the pitch edge or if the pitch gets too small.
+On a machine without Chromium or system fonts, `tools/browser-setup.sh` unpacks a browser plus
+its shared libraries locally (no root needed).
 
 ### Attribution
 
@@ -69,7 +105,9 @@ The footer's **photo credits** button opens the provenance of every downloaded p
 | `src/data/players.json` | Player index (slug → display name + photo path). |
 | `src/data/credits.json` | Photo provenance: for every photo, the Wikipedia article it came from. |
 | `tools/data/matches.raw.json` | The raw scrape (with source ids) that `matches.json` is built from. |
-| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, credits, name matching, difficulty and scoring rules. |
+| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, credits, name matching, difficulty and scoring rules, and the pitch-coordinate grid. |
+| `tools/layout-check.mjs` | The `npm run layout` suite: no scrolling, no clipped players and a usable pitch at 11 viewports × 5 states. |
+| `tools/browser-setup.sh` | Unpacks headless Chromium + fonts + shared libs into `/tmp` for the layout check (no root). |
 | `public/assets/players/*.jpg` | 149 player photos, ~2 MB total. |
 
 Coverage: **288 matches**, **373 distinct players**, **149 players with a photo (40 %)**.
