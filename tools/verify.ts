@@ -109,20 +109,6 @@ const players = new Set(matches.flatMap((m) => m.lineup.map((p) => p.name)));
 for (const m of matches) for (const p of m.lineup) if (p.photo) totalPhotos++;
 console.log(`  ${players.size} distinct players, ${referenced.size} photos referenced, ${totalPhotos} slot-photos wired`);
 
-const credits = JSON.parse(readFileSync(resolve(root, 'src/data/credits.json'), 'utf8')) as {
-  players: Record<string, { name: string; source: string }>;
-};
-const credited = new Set(Object.keys(credits.players));
-for (const rel of referenced) {
-  const slug = rel.replace(/^.*\//, '').replace(/\.jpg$/, '');
-  check(`photo credited: ${rel}`, credited.has(slug));
-}
-for (const [slug, c] of Object.entries(credits.players)) {
-  check(`credit ${slug}: has name`, !!c.name);
-  check(`credit ${slug}: has source url`, /^https?:\/\//.test(c.source));
-  check(`credit ${slug}: photo on disk`, existsSync(resolve(root, 'public/assets/players', `${slug}.jpg`)));
-}
-
 /* ---------------- name matching ---------------- */
 section('name matching');
 const pool = buildPool(matches);

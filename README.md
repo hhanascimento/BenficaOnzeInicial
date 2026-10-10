@@ -92,20 +92,14 @@ scroller overflows, if a photo is clipped by the pitch edge or if the pitch gets
 On a machine without Chromium or system fonts, `tools/browser-setup.sh` unpacks a browser plus
 its shared libraries locally (no root needed).
 
-### Attribution
-
-The footer's **photo credits** button opens the provenance of every downloaded photo
-(`src/data/credits.json`), each linked to the Wikipedia article it came from.
-
 ## Data
 
 | File | Contents |
 | --- | --- |
 | `src/data/matches.json` | 288 matches (1961 → 2026), each with the starting XI, positions and pitch coordinates. Generated, do not hand-edit. |
 | `src/data/players.json` | Player index (slug → display name + photo path). |
-| `src/data/credits.json` | Photo provenance: for every photo, the Wikipedia article it came from. |
 | `tools/data/matches.raw.json` | The raw scrape (with source ids) that `matches.json` is built from. |
-| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, credits, name matching, difficulty and scoring rules, and the pitch-coordinate grid. |
+| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, name matching, difficulty and scoring rules, and the pitch-coordinate grid. |
 | `tools/layout-check.mjs` | The `npm run layout` suite: no scrolling, no clipped players and a usable pitch at 11 viewports × 5 states. |
 | `tools/browser-setup.sh` | Unpacks headless Chromium + fonts + shared libs into `/tmp` for the layout check (no root). |
 | `public/assets/players/*.jpg` | 149 player photos, ~2 MB total. |
@@ -133,5 +127,5 @@ Wikimedia rate-limits aggressively from shared/cloud IPs (HTTP 429). Every respo
 in `wcache/` and each stage is resumable, so simply re-running a stage continues where it
 stopped. `tm.py` scrapes the match/line-up data (Transfermarkt publicly allows crawling).
 
-> Licensing: the photos are freely licensed, but several require attribution. Check
-> `src/data/credits.json` before redistributing, and update the footer credit if you publish.
+> Licensing: the photos are freely licensed, but several require attribution. Check the source
+> Wikipedia/Wikimedia Commons article before redistributing.

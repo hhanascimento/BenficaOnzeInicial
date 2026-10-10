@@ -411,21 +411,6 @@ ion-footer ion-toolbar {
 .found ion-chip { height: 26px; font-size: 11px; }
 .actions { flex-wrap: wrap; }
 
-.footerLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-left: 6px;
-  padding: 0;
-  font: inherit;
-  font-size: 11px;
-  color: var(--ion-color-primary-tint);
-  background: none;
-  border: 0;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 /* the header is tight: drop the "Novo Jogo" label before it crowds the title */
 @media (max-width: 560px) {
   .newGame__label { display: none; }

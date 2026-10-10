@@ -5,14 +5,13 @@ import {
 } from '@ionic/react';
 import {
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, close, informationCircle, shuffle,
+  flame, trophy, bulb, star, close, shuffle,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import type { LineupPlayer, Match } from './types';
 import matchesData from './data/matches.json';
 import Pitch from './components/Pitch';
 import Summary from './components/Summary';
-import Credits from './components/Credits';
 import {
   aliasHit, buildPool, knownFrom, matchesPlayer, matchesQuery, normalize,
 } from './lib/text';
@@ -27,7 +26,7 @@ import './App.css';
 
 addIcons({
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, close, informationCircle, shuffle,
+  flame, trophy, bulb, star, close, shuffle,
 });
 
 const MATCHES = matchesData as unknown as Match[];
@@ -74,7 +73,6 @@ export default function App() {
 
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
   const [stats, setStats] = useState<Stats>(() => loadStats());
-  const [creditsOpen, setCreditsOpen] = useState(false);
 
   const secondsRef = useRef(0);
   const recordedRef = useRef(false);
@@ -439,19 +437,10 @@ export default function App() {
           <p className="footer">
             {MATCHES.length} jogos históricos · resolvidos {stats.solved}/{stats.played} ·
             melhor sequência {stats.bestStreak}
-            <button
-              type="button"
-              className="footerLink"
-              data-testid="open-credits"
-              onClick={() => setCreditsOpen(true)}
-            >
-              <IonIcon icon={informationCircle} /> créditos das fotos
-            </button>
           </p>
         </IonToolbar>
       </IonFooter>
 
-      <Credits isOpen={creditsOpen} onClose={() => setCreditsOpen(false)} />
     </IonApp>
   );
 }
