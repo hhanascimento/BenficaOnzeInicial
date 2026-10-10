@@ -7,13 +7,9 @@ import type { Match } from '../types';
 export interface Settings {
   /** Show a first-letter hint inside each unknown slot. */
   hints: boolean;
-  /** Hide the score and date of the match until it is finished. */
-  blind: boolean;
-  /** Hide the autocomplete list — pure recall. */
-  hard: boolean;
 }
 
-export const DEFAULT_SETTINGS: Settings = { hints: false, blind: false, hard: false };
+export const DEFAULT_SETTINGS: Settings = { hints: false };
 
 const SETTINGS_KEY = 'benfica-xi:settings';
 const STATS_KEY = 'benfica-xi:stats';

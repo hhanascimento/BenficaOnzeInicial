@@ -5,7 +5,7 @@ import {
 } from '@ionic/react';
 import {
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, flash, lockClosed, close, informationCircle, shuffle,
+  flame, trophy, bulb, star, close, informationCircle, shuffle,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import type { LineupPlayer, Match } from './types';
@@ -27,7 +27,7 @@ import './App.css';
 
 addIcons({
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, flash, lockClosed, close, informationCircle, shuffle,
+  flame, trophy, bulb, star, close, informationCircle, shuffle,
 });
 
 const MATCHES = matchesData as unknown as Match[];
@@ -53,7 +53,7 @@ const MAX_AVG = maxAverageFrequency(MATCHES, FREQ);
 type Msg = { text: string; kind: 'ok' | 'bad' | 'info' };
 
 const SETTING_LABELS: { key: keyof Settings; label: string; icon: string; hint: string }[] = [
-  { key: 'hints', label: 'Dicas', icon: bulb, hint: 'Mostra a inicial de cada jogador' }
+  { key: 'hints', label: 'Dicas', icon: bulb, hint: 'Mostra a inicial de cada jogador' },
 ];
 
 export default function App() {
@@ -117,9 +117,9 @@ export default function App() {
 
   const suggestions = useMemo(() => {
     const q = normalize(guess);
-    if (settings.hard || q.length < 2 || finished) return [];
+    if (q.length < 2 || finished) return [];
     return POOL.filter((n) => matchesQuery(n, q)).slice(0, 6);
-  }, [guess, finished, settings.hard]);
+  }, [guess, finished]);
 
   const foundNames = useMemo(
     () => match.lineup.filter((_, i) => revealed.has(i)).map((p) => p.name),
@@ -225,7 +225,6 @@ export default function App() {
     setMessage(null);
   }
 
-  const showScore = !settings.blind || finished;
 
   const dateLabel = formatDate(match.date);
 
@@ -264,17 +263,13 @@ export default function App() {
           <section className="match card" data-testid="match-info">
             <h2>
               {match.home ? 'Benfica' : match.opponent}
-              {showScore ? (
-                match.score ? <span className="score"> {match.score} </span> : ' vs '
-              ) : (
-                <span className="score"> ? – ? </span>
-              )}
+              {match.score ? <span className="score"> {match.score} </span> : ' vs '}
               {match.home ? match.opponent : 'Benfica'}
             </h2>
             <p className="meta">
               <IonBadge color="primary">{match.competition}</IonBadge>
               {match.stage && <IonBadge color="medium">{match.stage}</IonBadge>}
-              <span>{settings.blind && !finished ? 'Data escondida' : dateLabel}</span>
+              <span>{dateLabel}</span>
               <span>·</span>
               <span>{match.home ? 'Casa' : 'Fora'}</span>
               {match.venue && <span className="meta__venue">· {match.venue}</span>}
@@ -355,7 +350,7 @@ export default function App() {
                     <IonInput
                       className="guessInput"
                       data-testid="guess-input"
-                      placeholder={settings.hard ? 'Lembra-te de um nome…' : 'Escreve o nome do jogador…'}
+                      placeholder="Escreve o nome do jogador…"
                       value={guess}
                       autocapitalize="words"
                       enterkeyhint="done"
@@ -407,7 +402,7 @@ export default function App() {
                     <p className={`msg msg--${message.kind}`} data-testid="message">{message.text}</p>
                   ) : (
                     <p className="msg msg--hint" data-testid="hint">
-                      {settings.hard ? 'Modo difícil — escreve um nome e carrega em Adivinha' : 'Escreve um nome e carrega em Adivinha'}
+                      Escreve um nome e carrega em Adivinha
                     </p>
                   )}
 

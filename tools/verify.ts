@@ -437,7 +437,7 @@ check('tiny decks are safe', JSON.stringify(shuffleDeck(1, 0)) === '[0]' && JSON
 
 section('misc');
 check('formatTime mm:ss', formatTime(0) === '00:00' && formatTime(65) === '01:05' && formatTime(3600) === '60:00');
-check('default settings shape', Object.keys(DEFAULT_SETTINGS).sort().join(',') === 'blind,hard,hints');
+check('default settings shape', Object.keys(DEFAULT_SETTINGS).sort().join(',') === 'hints');
 check('stats are pure (input untouched)', EMPTY_STATS.played === 0 && EMPTY_STATS.streak === 0);
 
 console.log(`\n${failures === 0 ? 'PASS' : 'FAIL'}: ${checks - failures}/${checks} checks passed`);
