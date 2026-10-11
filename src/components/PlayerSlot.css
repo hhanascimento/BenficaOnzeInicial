@@ -110,7 +110,9 @@
 
 /* the empty slot is the positioning context for the hint badge: a badge hung off
    the slot box stuck out of the pitch for a player near the touchline (the box
-   is wider than the circle), one inside the circle's own box never can */
+   is wider than the circle), one inside the circle's own box never can.
+   The badge carries two initials now ("HC"), so it is a pill, not a circle:
+   it grows leftwards from `right: 0`, i.e. into the placeholder, never out. */
 .slot__placeholder {
   position: relative;
   width: clamp(13px, 13.6cqw, 78px);
@@ -144,15 +146,18 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: clamp(9px, 4.6cqw, 28px);
-  height: clamp(9px, 4.6cqw, 28px);
+  min-width: clamp(9px, 4.6cqw, 28px);
+  height: clamp(9px, 4.6cqw, 26px);
+  padding: 0 clamp(1px, 0.7cqw, 4px);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(5px, 3.2cqw, 16px);
+  font-size: clamp(5px, 2.8cqw, 13px);
+  letter-spacing: 0.3px;
   font-style: normal;
   font-weight: 800;
   color: #0f1115;
   background: #ffc400;
-  border-radius: 50%;
+  border-radius: 999px;
 }

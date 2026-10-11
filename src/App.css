@@ -332,17 +332,6 @@ ion-footer ion-toolbar {
 
 .hud__item ion-icon { color: #ffc400; }
 
-/* ---------- difficulty stars ---------- */
-.stars {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  margin: 4px 0 0 !important;
-  font-size: 12px;
-}
-
-.stars ion-icon.off { color: #3a4250; }
-
 /* ---------- settings toggles ---------- */
 .settings {
   display: flex;
@@ -422,7 +411,7 @@ ion-footer ion-toolbar {
 
 /* ---------- narrow screens ---------- */
 @media (max-width: 420px) {
-  /* the title is longer now: keep "… 1/288" visible instead of truncating it */
+  /* the title is longer now: keep "… 1/480" visible instead of truncating it */
   ion-title { font-size: 14px; letter-spacing: 0; }
   .titleCount { font-size: 10px; margin-left: 3px; }
   .hud { gap: 8px; padding-right: 8px; font-size: 12px; }
@@ -452,7 +441,6 @@ ion-footer ion-toolbar {
 }
 
 @media (max-height: 660px) {
-  .stars { display: none; }
   .card { padding: 6px 9px; margin-bottom: 6px; }
   .match h2 { font-size: 15px; }
   .toggle { padding: 3px 8px; font-size: 10px; }

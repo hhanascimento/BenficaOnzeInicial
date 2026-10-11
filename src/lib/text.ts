@@ -170,3 +170,105 @@ export function aliasHit(player: KnownPlayer, query: string): string | null {
   if (queryHitsName(player.name, query)) return null;
   return (player.aliases ?? []).find((a) => queryHitsName(a, query)) ?? null;
 }
+
+/**
+ * The fuller name shown to the right of a suggestion.
+ *
+ * The list always shows the complete name we know for the player — a slot
+ * displayed as "de Tomás" is offered as "de Tomás   Raul De Tomas" — so a
+ * one-word entry never hides the first name the source slug carries. The alias
+ * that actually matched the query wins when there is one (e.g. typing "tomás"
+ * against the shared name "Tavares" keeps showing *Tomás Tavares*, not the
+ * unrelated first alias). Returns null only when the player is known by a
+ * single name and there is nothing more to show.
+ */
+export function fullerName(player: KnownPlayer, query = ''): string | null {
+  const aliases = (player.aliases ?? []).filter(Boolean);
+  if (aliases.length === 0) return null;
+  return aliasHit(player, query) ?? aliases[0];
+}
+
+/**
+ * The initials of a player, used both as the hint inside an unknown slot and as
+ * the photo fallback: first letter and last letter of the name, e.g.
+ * "Costa Pereira" → "CP".
+ *
+ * The displayed name is usually just the surname ("Cristóvão"), which would
+ * give a single letter, so a one-word name is expanded to the fullest name we
+ * know — `fullName` when the dataset has it, otherwise the source slug
+ * ("helder-cristovao" → "Helder Cristovao" → "HC"). A name already written in
+ * two words keeps its own initials ("Bastos Lopes" → "BL"), since that is the
+ * name the player has to type.
+ */
+export function initialsFor(player: { name: string; fullName?: string; slug?: string }): string {
+  // only words that actually start with a letter count, so a qualifier such as
+  // "Julio Cesar (Defesa)" gives "JC" and never "J("
+  const named = (value: string) =>
+    value.split(/\s+/).filter((w) => /^\p{L}/u.test(w));
+  const display = named(player.name);
+  let words = display;
+  if (display.length < 2) {
+    const full = player.fullName?.trim() || (player.slug ? nameFromSlug(player.slug) : '');
+    const fuller = named(full);
+    if (fuller.length > 1) words = fuller;
+  }
+  if (words.length === 0) return '';
+  const first = words[0][0] ?? '';
+  const last = words.length > 1 ? (words[words.length - 1][0] ?? '') : '';
+  return (first + last).toUpperCase();
+}
+
+/* ------------------------------------------------------------------ *
+ * Suggestion ranking
+ * ------------------------------------------------------------------ */
+
+/** How strongly a player matches what has been typed (0 = no match). */
+export function queryScore(player: KnownPlayer, query: string): number {
+  const qNorm = normalize(query);
+  if (!qNorm) return 0;
+  const qWords = tokens(query);
+  let best = 0;
+  for (const name of namesFor(player)) {
+    const n = normalize(name);
+    const words = tokens(name);
+    // the whole name typed out, letters and all
+    if (n === qNorm) best = Math.max(best, 100);
+    // start of one of the name's words ("grimal" → "Grimaldo", but also
+    // "silva" → the alias "Antonio Silva")
+    if (words.some((w) => w.startsWith(qNorm))) best = Math.max(best, 70);
+    // several words, each starting a name word, any order
+    if (qWords.length > 1 && qWords.every((q) => words.some((w) => w.startsWith(q)))) {
+      best = Math.max(best, 60);
+    }
+    // a plain substring, so mid-word typing still suggests ("osta" → "Costa
+    // Pereira"). Weakest on purpose: it is also what makes "toni" hit
+    // "An*toni*o", so it must never outrank a real prefix.
+    if (n.includes(qNorm)) best = Math.max(best, 30);
+  }
+  return best;
+}
+
+const PREFIX_SCORE = 60;
+
+/**
+ * The suggestion list for a partly typed name, best match first.
+ *
+ * A weak mid-word hit must not bury the player who actually starts with what
+ * was typed: "toni" matches "Toni" as a word prefix but every "António …" as a
+ * substring, and the substring names sort first alphabetically, which is how
+ * "Toni" used to never show up. So when any word-prefix match exists, only
+ * those are offered; the substring fallback is used when nothing else does.
+ */
+export function suggestPlayers(pool: KnownPlayer[], query: string, limit = 6): KnownPlayer[] {
+  const scored: { player: KnownPlayer; score: number }[] = [];
+  for (const player of pool) {
+    const score = queryScore(player, query);
+    if (score > 0) scored.push({ player, score });
+  }
+  if (scored.length === 0) return [];
+  const strong = scored.filter((x) => x.score >= PREFIX_SCORE);
+  const ranked = (strong.length > 0 ? strong : scored).sort(
+    (a, b) => b.score - a.score || a.player.name.localeCompare(b.player.name),
+  );
+  return ranked.slice(0, limit).map((x) => x.player);
+}

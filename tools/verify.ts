@@ -7,14 +7,14 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Match } from '../src/types.ts';
 import {
-  aliasHit, buildPool, knownFrom, matchesPlayer, matchesQuery, nameFromSlug,
-  normalize as normalizeName,
+  aliasHit, buildPool, fullerName, knownFrom, initialsFor, matchesPlayer, matchesQuery,
+  nameFromSlug, normalize as normalizeName, suggestPlayers,
 } from '../src/lib/text.ts';
 import type { KnownPlayer } from '../src/lib/text.ts';
 import { slotLeft, X_SCALE } from '../src/lib/pitch.ts';
 import {
-  playerFrequency, maxAverageFrequency, matchDifficulty,
   scoreRound, applyResult, formatTime, EMPTY_STATS, DEFAULT_SETTINGS, shuffleDeck,
+  shuffled, matchYear, yearBounds, matchesInRange, presetFor, formatEraLabel, ERA_PRESETS,
 } from '../src/lib/game.ts';
 
 const root = resolve(import.meta.dirname, '..');
@@ -246,6 +246,56 @@ check('suggestion: explains a slug hit', aliasHit(target('Grimaldo'), 'alejandro
 check('suggestion: no alias note for the display name',
   aliasHit(target('Grimaldo'), 'grimaldo') === null);
 
+/* The list always shows the fuller name a slug carries, so a one-word entry
+   never hides the first name — and the alias that matched the query wins when
+   the display name is shared by several players. */
+check('suggestion: the fuller name shows even when the display name matched',
+  fullerName(target('Grimaldo'), 'grimaldo') === 'Alejandro Grimaldo',
+  String(fullerName(target('Grimaldo'), 'grimaldo')));
+check('suggestion: the matched alias wins over the first one',
+  fullerName(pool.find((p) => p.name === 'Tavares')!, 'tomas') === 'Tomas Tavares',
+  String(fullerName(pool.find((p) => p.name === 'Tavares')!, 'tomas')));
+check('suggestion: a one-word entry with a slug shows its full name',
+  fullerName(pool.find((p) => p.name === 'de Tomás')!, 'tomas') === 'Raul De Tomas',
+  String(fullerName(pool.find((p) => p.name === 'de Tomás')!, 'tomas')));
+check('suggestion: a player known by a single name shows nothing',
+  fullerName(target('Toni'), 'toni') === null);
+const missingFuller = pool.filter((p) => (p.aliases?.length ?? 0) > 0 && !fullerName(p, ''));
+check('suggestion: every alias-carrying player resolves a fuller name',
+  missingFuller.length === 0, `${missingFuller.length} without: ${missingFuller.slice(0, 5).map((p) => p.name).join(', ')}`);
+
+/* The list ranks candidates. A weak mid-word hit used to bury the player who
+   actually starts with what was typed: "toni" matched every "António …" as a
+   substring and they sorted first, so "Toni" never appeared in the six. */
+check('suggestion: a word prefix outranks a mid-word hit',
+  suggestPlayers(pool, 'toni').map((p) => p.name).join(',') === 'Toni',
+  suggestPlayers(pool, 'toni').map((p) => p.name).join(','));
+check('suggestion: ranked list still falls back to mid-word typing',
+  suggestPlayers(pool, 'osta').some((p) => p.name === 'Costa Pereira'),
+  suggestPlayers(pool, 'osta').map((p) => p.name).join(','));
+check('suggestion: the exact name comes first',
+  suggestPlayers(pool, 'grimaldo')[0]?.name === 'Grimaldo');
+
+/* Hint initials: first + last letter of the fullest known name. */
+check('hint initials: a one-word name expands through the slug',
+  initialsFor({ name: 'Cristóvão', slug: 'helder-cristovao' }) === 'HC',
+  initialsFor({ name: 'Cristóvão', slug: 'helder-cristovao' }));
+check('hint initials: a two-word name keeps its own letters',
+  initialsFor({ name: 'Costa Pereira', slug: 'costa-pereira' }) === 'CP');
+check('hint initials: a two-word name does not import the slug name',
+  initialsFor({ name: 'Bastos Lopes', slug: 'antonio-bastos-lopes' }) === 'BL',
+  initialsFor({ name: 'Bastos Lopes', slug: 'antonio-bastos-lopes' }));
+check('hint initials: a single known word stays single',
+  initialsFor({ name: 'Toni', slug: 'toni' }) === 'T');
+check('hint initials: fullName wins when the dataset carries it',
+  initialsFor({ name: 'Coluna', fullName: 'Mário Coluna' }) === 'MC');
+const badInitials = matches
+  .flatMap((m) => m.lineup)
+  .map((p) => initialsFor(p))
+  .filter((i) => !/^\p{Lu}{1,2}$/u.test(i));
+check('hint initials: every dataset player yields one or two letters',
+  badInitials.length === 0, `${badInitials.length} bad: ${[...new Set(badInitials)].slice(0, 5).join(', ')}`);
+
 /* ---------------- slot size ----------------
    The circles are sized in `cqw` (percent of the pitch width) so they scale
    with the pitch. The pitch cannot grow – it is capped by the viewport height –
@@ -338,36 +388,23 @@ check('the pitch has a sane size cap', maxPitch >= 300 && maxPitch <= 560, `${ma
 console.log(`  photo ${photo.cqw}cqw / max ${photo.maxPx}px, placeholder ${placeholder.cqw}cqw`
   + ` — closest pair ${tightest.toFixed(4)} of the pitch width (${tightestTag})`);
 
-/* ---------------- difficulty ---------------- */
-section('difficulty');
-const freq = playerFrequency(matches);
-const maxAvg = maxAverageFrequency(matches, freq);
-const stars = matches.map((m) => matchDifficulty(m, freq, maxAvg));
-check('every match scores 1..5', stars.every((s) => Number.isInteger(s) && s >= 1 && s <= 5));
-const spread = new Set(stars);
-check('difficulty actually varies', spread.size >= 3, `levels used: ${[...spread].sort().join(',')}`);
-console.log(`  levels used: ${[...spread].sort().join(',')}`);
-
 /* ---------------- scoring ---------------- */
 section('scoring');
-const full = scoreRound({ total: 11, revealed: 11, seconds: 60, difficulty: 3, usedReveal: false, hintsOn: false });
+const full = scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: false, hintsOn: false });
 check('solved round scores points', full.points > 0 && full.solved);
 check('faster solve beats slower solve',
-  scoreRound({ total: 11, revealed: 11, seconds: 30, difficulty: 3, usedReveal: false, hintsOn: false }).points >
-  scoreRound({ total: 11, revealed: 11, seconds: 300, difficulty: 3, usedReveal: false, hintsOn: false }).points);
-check('harder match scores more',
-  scoreRound({ total: 11, revealed: 11, seconds: 120, difficulty: 5, usedReveal: false, hintsOn: false }).points >
-  scoreRound({ total: 11, revealed: 11, seconds: 120, difficulty: 1, usedReveal: false, hintsOn: false }).points);
+  scoreRound({ total: 11, revealed: 11, seconds: 30, usedReveal: false, hintsOn: false }).points >
+  scoreRound({ total: 11, revealed: 11, seconds: 300, usedReveal: false, hintsOn: false }).points);
 check('reveal counts as not solved',
-  !scoreRound({ total: 11, revealed: 11, seconds: 60, difficulty: 3, usedReveal: true, hintsOn: false }).solved);
+  !scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: true, hintsOn: false }).solved);
 check('hints cost points',
-  scoreRound({ total: 11, revealed: 11, seconds: 60, difficulty: 3, usedReveal: false, hintsOn: false }).points >
-  scoreRound({ total: 11, revealed: 11, seconds: 60, difficulty: 3, usedReveal: false, hintsOn: true }).points);
+  scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: false, hintsOn: false }).points >
+  scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: false, hintsOn: true }).points);
 check('partial round gives partial credit',
-  scoreRound({ total: 11, revealed: 4, seconds: 60, difficulty: 3, usedReveal: false, hintsOn: false }).points > 0);
-check('zero found gives zero', scoreRound({ total: 11, revealed: 0, seconds: 5, difficulty: 3, usedReveal: false, hintsOn: false }).points === 0);
+  scoreRound({ total: 11, revealed: 4, seconds: 60, usedReveal: false, hintsOn: false }).points > 0);
+check('zero found gives zero', scoreRound({ total: 11, revealed: 0, seconds: 5, usedReveal: false, hintsOn: false }).points === 0);
 check('points never negative',
-  scoreRound({ total: 11, revealed: 11, seconds: 9999, difficulty: 1, usedReveal: true, hintsOn: true }).points >= 0);
+  scoreRound({ total: 11, revealed: 11, seconds: 9999, usedReveal: true, hintsOn: true }).points >= 0);
 
 section('stats');
 const win = applyResult(EMPTY_STATS, full);
@@ -376,7 +413,7 @@ const twice = applyResult(win, full);
 check('second win extends streak', twice.streak === 2 && twice.played === 2);
 check('best score tracks the best round', twice.bestScore === full.points);
 
-const partial = scoreRound({ total: 11, revealed: 3, seconds: 100, difficulty: 2, usedReveal: false, hintsOn: false });
+const partial = scoreRound({ total: 11, revealed: 3, seconds: 100, usedReveal: false, hintsOn: false });
 const afterPartial = applyResult(twice, partial);
 check('loss resets streak but keeps best', afterPartial.streak === 0 && afterPartial.bestStreak === 2);
 check('played always increments', afterPartial.played === 3);
@@ -420,6 +457,39 @@ for (let n = 0; n < 300; n++) if (shuffleDeck(matches.length, 17)[0] === 17) bad
 check('never returns the just-played match first', badFirst === 0, `${badFirst}/300`);
 check('wrap-around never repeats the previous match', wrappedWithRepeat === 0, String(wrappedWithRepeat));
 check('tiny decks are safe', JSON.stringify(shuffleDeck(1, 0)) === '[0]' && JSON.stringify(shuffleDeck(0)) === '[]');
+
+section('eras');
+const bounds = yearBounds(matches);
+check('era bounds span the dataset',
+  bounds.from === 1961 && bounds.to === 2026, JSON.stringify(bounds));
+let eraTotal = 0;
+let eraFailures = 0;
+for (const preset of ERA_PRESETS) {
+  const inRange = matchesInRange(matches, preset.from, preset.to);
+  eraTotal += inRange.length;
+  for (const i of inRange) {
+    const year = matchYear(matches[i]);
+    if (year < preset.from || year > preset.to) eraFailures += 1;
+  }
+  if (presetFor({ from: preset.from, to: preset.to })?.label !== preset.label) eraFailures += 1;
+}
+check('each decade selects only its own years', eraFailures === 0, String(eraFailures));
+check('the seven decades cover the whole dataset', eraTotal === matches.length,
+  `${eraTotal}/${matches.length}`);
+check('every decade has at least one match to play',
+  ERA_PRESETS.every((p) => matchesInRange(matches, p.from, p.to).length > 0));
+check('era label: decade, custom range and "everything"',
+  formatEraLabel({ from: 1960, to: 1969 }, bounds) === 'Anos 60'
+  && formatEraLabel({ from: 1974, to: 1982 }, bounds) === '1974–1982'
+  && formatEraLabel({ from: bounds.from, to: bounds.to }, bounds) === 'Todas as épocas');
+check('the full range keeps every match',
+  matchesInRange(matches, bounds.from, bounds.to).length === matches.length);
+check('an empty range selects nothing', matchesInRange(matches, 1900, 1909).length === 0);
+check('shuffled keeps every item and honours avoidFirst', (() => {
+  const items = [3, 4, 5, 6];
+  const out = shuffled(items, 3);
+  return out.length === 4 && new Set(out).size === 4 && out[0] !== 3;
+})());
 
 section('misc');
 check('formatTime mm:ss', formatTime(0) === '00:00' && formatTime(65) === '01:05' && formatTime(3600) === '60:00');

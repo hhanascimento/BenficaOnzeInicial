@@ -1,5 +1,5 @@
 import { IonBadge, IonButton, IonIcon } from '@ionic/react';
-import { trophy, timerOutline, star, flame, refresh } from 'ionicons/icons';
+import { trophy, timerOutline, flame, refresh } from 'ionicons/icons';
 import type { RoundResult } from '../lib/game';
 import { formatTime, formatDate } from '../lib/game';
 import type { Match } from '../types';
@@ -9,7 +9,6 @@ interface Props {
   match: Match;
   result: RoundResult;
   seconds: number;
-  difficulty: number;
   streak: number;
   usedReveal: boolean;
   revealed: number;
@@ -18,10 +17,12 @@ interface Props {
 }
 
 export default function Summary({
-  match, result, seconds, difficulty, streak, usedReveal, revealed, onNext, onReplay,
+  match, result, seconds, streak, usedReveal, revealed, onNext, onReplay,
 }: Props) {
   const headline = usedReveal ? 'Onze revelado' : result.solved ? 'Onze completo!' : 'Jogo terminado';
-  const scoreLabel = result.solved ? 'Perfeito' : 'Complicado';
+  /* Not "Complicado" — that described the XI and blamed the difficulty for a
+     round the player chose to end. "Sem completar" says what actually happened. */
+  const scoreLabel = result.solved ? 'Perfeito' : 'Sem completar';
 
   return (
     <div className="summary" data-testid="summary">
@@ -56,11 +57,6 @@ export default function Summary({
           <span>tempo</span>
         </div>
         <div className="summary__cell">
-          <IonIcon icon={star} />
-          <strong>{difficulty}/5</strong>
-          <span>dificuldade</span>
-        </div>
-        <div className="summary__cell">
           <IonIcon icon={flame} />
           <strong>{streak}</strong>
           <span>sequência</span>
@@ -71,7 +67,6 @@ export default function Summary({
         <li><span>Jogadores encontrados</span><b>{revealed}/{match.lineup.length}</b></li>
         <li><span>Pontuação base</span><b>{result.base}</b></li>
         <li><span>Bónus de tempo</span><b>+{result.timeBonus}</b></li>
-        <li><span>Multiplicador Dificuldade</span><b>×{result.multiplier.toFixed(1)}</b></li>
         {result.hintPenalty > 0 && (
           <li className="summary__penalty"><span>Dicas usadas</span><b>−{result.hintPenalty}</b></li>
         )}

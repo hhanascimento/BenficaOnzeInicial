@@ -13,19 +13,17 @@ interface Props {
   onHelp: () => void;
 }
 
-/** The intro screen: club crest, the promise of the game and the two ways in. */
+/** The intro screen: the app logo (crest + wordmark), the promise of the game and
+ *  the two ways in. The logo carries the name, so the <h1> is text for screen
+ *  readers only and is not repeated on screen. */
 export default function Home({ onPlay, onHelp }: Props) {
   const stats = loadStats();
 
   return (
     <IonContent className="homeScreen">
       <div className="home">
-        <img
-          className="home__logo"
-          src="assets/benfica-logo.svg"
-          alt="Emblema do Sport Lisboa e Benfica"
-        />
-        <h1 className="home__title">Benfica Onze Inicial</h1>
+        <img className="home__logo" src="assets/benfica-logo.svg" alt="" />
+        <h1 className="home__srTitle">Benfica Onze Inicial</h1>
         <p className="home__tagline">
           Adivinha o onze inicial do Benfica em jogos históricos — de 1961 aos dias de hoje.
         </p>

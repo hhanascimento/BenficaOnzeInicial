@@ -5,7 +5,7 @@ import {
 } from '@ionic/react';
 import {
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, close, shuffle, home,
+  flame, trophy, bulb, close, shuffle, home,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import type { LineupPlayer, Match } from '../types';
@@ -13,20 +13,20 @@ import matchesData from '../data/matches.json';
 import Pitch from './Pitch';
 import Summary from './Summary';
 import {
-  aliasHit, buildPool, knownFrom, matchesPlayer, matchesQuery, normalize,
+  buildPool, fullerName, knownFrom, matchesPlayer, normalize, suggestPlayers,
 } from '../lib/text';
 import type { KnownPlayer } from '../lib/text';
 import {
   loadSettings, saveSettings, loadStats, saveStats,
-  playerFrequency, maxAverageFrequency, matchDifficulty,
-  scoreRound, applyResult, formatTime, formatDate, shuffleDeck,
+  scoreRound, applyResult, formatTime, formatDate, shuffled,
+  matchesInRange, yearBounds, formatEraLabel,
 } from '../lib/game';
-import type { Settings, Stats, RoundResult } from '../lib/game';
+import type { Settings, Stats, RoundResult, EraRange } from '../lib/game';
 import '../App.css';
 
 addIcons({
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, star, close, shuffle, home,
+  flame, trophy, bulb, close, shuffle, home,
 });
 
 const MATCHES = matchesData as unknown as Match[];
@@ -45,25 +45,36 @@ const POOL: KnownPlayer[] = buildPool(MATCHES);
  */
 const knownOf = (p: LineupPlayer): KnownPlayer => knownFrom(p);
 
-/* Difficulty is dataset-wide, so it is computed once. */
-const FREQ = playerFrequency(MATCHES);
-const MAX_AVG = maxAverageFrequency(MATCHES, FREQ);
+/** The dataset's own first/last year, for the "all eras" fallback label. */
+const BOUNDS = yearBounds(MATCHES);
 
 interface Props {
+  /** The period this game's matches are drawn from (chosen before the round). */
+  era: EraRange;
   /** Leave the game and go back to the intro screen. */
   onHome: () => void;
+  /** Leave the round and choose a different period for the next game. */
+  onNewGame: () => void;
 }
 
 type Msg = { text: string; kind: 'ok' | 'bad' | 'info' };
 
 const SETTING_LABELS: { key: keyof Settings; label: string; icon: string; hint: string }[] = [
-  { key: 'hints', label: 'Dicas', icon: bulb, hint: 'Mostra a inicial de cada jogador' },
+  { key: 'hints', label: 'Dicas', icon: bulb, hint: 'Mostra as iniciais de cada jogador' },
 ];
 
-export default function Game({ onHome }: Props) {
-  const [deck, setDeck] = useState(() => shuffleDeck(MATCHES.length, -1));
+export default function Game({ era, onHome, onNewGame }: Props) {
+  /* Only the matches inside the chosen era take part in this game. The picker
+     never starts an empty range, but a fallback keeps the pitch renderable
+     rather than crashing if the dataset ever has no match in the range. */
+  const pool = useMemo(() => {
+    const indices = matchesInRange(MATCHES, era.from, era.to);
+    return indices.length > 0 ? indices : matchesInRange(MATCHES, BOUNDS.from, BOUNDS.to);
+  }, [era.from, era.to]);
+
+  const [deck, setDeck] = useState(() => shuffled(pool));
   const [index, setIndex] = useState(0);
-  const match = MATCHES[deck[index]];
+  const match = MATCHES[deck[index] ?? pool[0]];
 
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [lastRevealed, setLastRevealed] = useState<number | null>(null);
@@ -81,8 +92,6 @@ export default function Game({ onHome }: Props) {
 
   const secondsRef = useRef(0);
   const recordedRef = useRef(false);
-
-  const difficulty = useMemo(() => matchDifficulty(match, FREQ, MAX_AVG), [match]);
 
   const solved = revealed.size === match.lineup.length;
   const finished = solved || usedReveal;
@@ -105,7 +114,6 @@ export default function Game({ onHome }: Props) {
       total: match.lineup.length,
       revealed: revealed.size,
       seconds: secondsRef.current,
-      difficulty,
       usedReveal,
       hintsOn: settings.hints,
     });
@@ -121,7 +129,7 @@ export default function Game({ onHome }: Props) {
   const suggestions = useMemo(() => {
     const q = normalize(guess);
     if (q.length < 2 || finished) return [];
-    return POOL.filter((n) => matchesQuery(n, q)).slice(0, 6);
+    return suggestPlayers(POOL, guess);
   }, [guess, finished]);
 
   const foundNames = useMemo(
@@ -149,17 +157,10 @@ export default function Game({ onHome }: Props) {
     if (index + 1 < deck.length) {
       setIndex(index + 1);
     } else {
-      // every match has been played once – start a fresh shuffled pass
-      setDeck(shuffleDeck(MATCHES.length, deck[deck.length - 1]));
+      // every match of the era has been played once – fresh shuffled pass
+      setDeck(shuffled(pool, deck[deck.length - 1]));
       setIndex(0);
     }
-    resetRound();
-  }
-
-  /** Skip straight to a new game: reshuffle and start on a different match. */
-  function newGame() {
-    setDeck(shuffleDeck(MATCHES.length, deck[index]));
-    setIndex(0);
     resetRound();
   }
 
@@ -248,16 +249,16 @@ export default function Game({ onHome }: Props) {
           </button>
           <IonTitle>
             Benfica Onze Inicial
-            <span className="titleCount"> {index + 1}/{MATCHES.length}</span>
+            <span className="titleCount"> {index + 1}/{pool.length}</span>
           </IonTitle>
           <div className="hud" slot="end">
             <button
               type="button"
               className="newGame"
               data-testid="new-game"
-              title="Sorteia um jogo novo"
+              title="Escolhe a época de um jogo novo"
               aria-label="Novo Jogo"
-              onClick={newGame}
+              onClick={onNewGame}
             >
               <IonIcon icon={shuffle} />
               <span className="newGame__label">Novo Jogo</span>
@@ -287,11 +288,6 @@ export default function Game({ onHome }: Props) {
               <span>·</span>
               <span>{match.home ? 'Casa' : 'Fora'}</span>
               {match.venue && <span className="meta__venue">· {match.venue}</span>}
-            </p>
-            <p className="stars" title={`Dificuldade ${difficulty}/5`} data-testid="difficulty">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <IonIcon key={n} icon={star} className={n <= difficulty ? 'on' : 'off'} />
-              ))}
             </p>
           </section>
           )}
@@ -350,7 +346,6 @@ export default function Game({ onHome }: Props) {
                 match={match}
                 result={result}
                 seconds={seconds}
-                difficulty={difficulty}
                 streak={stats.streak}
                 usedReveal={usedReveal}
                 revealed={revealed.size}
@@ -385,9 +380,9 @@ export default function Game({ onHome }: Props) {
                     {suggestions.length > 0 && (
                       <ul className="suggest" data-testid="suggestions">
                         {suggestions.map((p, i) => {
-                          // when the hit comes from the slug's fuller name, say so –
-                          // otherwise the list looks like it is offering a stranger
-                          const alias = aliasHit(p, guess);
+                          // always offer the fuller name the slug carries, so a
+                          // one-word entry does not hide the player's first name
+                          const alias = fullerName(p, guess);
                           return (
                             <li key={p.name}>
                               <button
@@ -451,8 +446,8 @@ export default function Game({ onHome }: Props) {
       <IonFooter>
         <IonToolbar>
           <p className="footer">
-            {MATCHES.length} jogos históricos · resolvidos {stats.solved}/{stats.played} ·
-            melhor sequência {stats.bestStreak}
+            {formatEraLabel(era, BOUNDS)} · {pool.length} jogos · resolvidos{' '}
+            {stats.solved}/{stats.played} · melhor sequência {stats.bestStreak}
           </p>
         </IonToolbar>
       </IonFooter>

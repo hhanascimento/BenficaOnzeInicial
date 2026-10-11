@@ -23,29 +23,25 @@
 }
 
 .home__logo {
-  width: clamp(120px, 34vh, 210px);
+  /* the lockup is crest + wordmark, so it is ~1.28x taller than it is wide */
+  width: clamp(112px, 30vh, 178px);
   height: auto;
   /* the crest already reads on dark: a soft glow just lifts it off the page */
   filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.55));
 }
 
-.home__title {
-  margin: 4px 0 0;
-  font-size: clamp(24px, 5.4vh, 34px);
-  font-weight: 800;
-  letter-spacing: 0.4px;
-  color: #fff;
-}
-
-.home__title::after {
-  /* a thin red-to-gold rule under the title, echoing the club colours */
-  content: "";
-  display: block;
-  width: 112px;
-  height: 3px;
-  margin: 10px auto 0;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #b30000, #ffc400);
+/* The name is drawn inside the logo (crest + wordmark + the red-to-gold rule), so
+   it only needs to exist for assistive tech / the document outline. */
+.home__srTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .home__tagline {
@@ -81,7 +77,6 @@
 /* very short windows (phone in landscape): the crest gives way to the buttons */
 @media (max-height: 560px) {
   .home { gap: 6px; padding: 12px 22px; }
-  .home__logo { width: clamp(84px, 26vh, 130px); }
-  .home__title::after { margin-top: 6px; }
+  .home__logo { width: clamp(78px, 21vh, 104px); }
   .home__actions { margin-top: 8px; gap: 8px; }
 }

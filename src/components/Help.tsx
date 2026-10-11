@@ -1,11 +1,11 @@
 import { IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/react';
 import {
-  arrowBack, bulb, eye, refresh, shuffle, star, timerOutline, trophy,
+  arrowBack, bulb, calendar, eye, refresh, shuffle, timerOutline, trophy,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import './Help.css';
 
-addIcons({ arrowBack, bulb, eye, refresh, shuffle, star, timerOutline, trophy });
+addIcons({ arrowBack, bulb, calendar, eye, refresh, shuffle, timerOutline, trophy });
 
 interface Props {
   /** Return to the intro screen. */
@@ -13,6 +13,7 @@ interface Props {
 }
 
 const STEPS = [
+  'Antes de cada jogo escolhe a época: uma década (Anos 60 … Anos 2020) ou um intervalo de anos à tua escolha. Todos os onzes dessa ronda vêm desse período.',
   'Lê o jogo no topo: competição, data e se o Benfica jogou em casa ou fora.',
   'Escreve o nome de um jogador no campo de texto e carregue em «Adivinha» (ou prime Enter). A lista de sugestões ajuda enquanto escreves.',
   'Se o jogador pertencer a esse onze, a fotografia dele aparece na posição certa do campo.',
@@ -26,19 +27,14 @@ const RULES = [
     text: 'O cronómetro começa mal a ronda abre e só para quando ela termina. Quanto mais rápido fores, maior o bónus de tempo.',
   },
   {
-    icon: star,
-    title: 'Dificuldade',
-    text: 'Cada onze vale 1 a 5 estrelas, conforme a raridade dos jogadores na base de dados. Onzes mais difíceis têm um multiplicador de pontos maior.',
-  },
-  {
     icon: trophy,
     title: 'Pontuação',
-    text: 'Cada jogador encontrado vale 100 pontos. Completar o onze soma o bónus de tempo e multiplica pelo fator de dificuldade (0,9× a 1,3×).',
+    text: 'Cada jogador encontrado vale 100 pontos. Completar o onze soma o bónus de tempo: quanto mais depressa acabares, mais pontos.',
   },
   {
     icon: bulb,
     title: 'Dicas',
-    text: 'Liga as dicas para ver a inicial de cada jogador por descobrir. Ao usar dicas, a pontuação final é 15% menor.',
+    text: 'Liga as dicas para ver as iniciais de cada jogador por descobrir — «HC» para Hélder Cristóvão, «CP» para Costa Pereira. Ao usar dicas, a pontuação final é 15% menor.',
   },
   {
     icon: eye,
@@ -51,9 +47,14 @@ const RULES = [
     text: 'No resumo, «Repetir» recomeça a mesma ronda e «Próximo Jogo» avança para o jogo seguinte.',
   },
   {
+    icon: calendar,
+    title: 'Época',
+    text: 'O rodapé mostra a época do jogo atual e quantos jogos ela tem. Dentro da mesma época, «Próximo Jogo» avança para o jogo seguinte, sem repetir nenhum até os teres jogado todos.',
+  },
+  {
     icon: shuffle,
     title: 'Novo Jogo',
-    text: 'Comece um jogo novo a qualquer momento: os jogos são baralhados e não se repetem até teres passado por todos.',
+    text: 'A qualquer momento podes começar um jogo novo: escolhes outra vez a época e os jogos desse período são baralhados, sem se repetirem até teres passado por todos.',
   },
 ];
 
@@ -103,6 +104,11 @@ export default function Help({ onBack }: Props) {
             Podes escrever o nome completo ou só o apelido — «Eusébio», «Eusébio da Silva Ferreira»
             ou «Silva Ferreira» encontram o mesmo jogador. Acentos e maiúsculas não contam. Um
             apelido isolado só é aceite quando nenhum outro jogador desse onze o partilha.
+          </p>
+          <p className="help__body">
+            Na lista de sugestões, o nome à direita é o nome completo do jogador — «de Tomás»
+            aparece como «Raul De Tomas». Só os jogadores conhecidos por um único nome não o
+            mostram.
           </p>
 
           <h2 className="help__head">Regras e pontuação</h2>

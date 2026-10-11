@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import type { LineupPlayer } from '../types';
 import { slotLeft } from '../lib/pitch';
+import { initialsFor } from '../lib/text';
 import './PlayerSlot.css';
 
 interface Props {
   player: LineupPlayer;
   revealed: boolean;
   justRevealed?: boolean;
-  /** Show the player's first initial in the empty slot. */
+  /** Show the player's initials in the empty slot. */
   hint?: boolean;
   /** This is the slot the player last looked at. */
   active?: boolean;
@@ -28,11 +29,10 @@ export default function PlayerSlot({
   const [photoFailed, setPhotoFailed] = useState(false);
   const showPhoto = !!player.photo && !photoFailed;
 
-  const initials = player.name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('');
+  /* First + last initial ("Cristóvão" → "HC", "Costa Pereira" → "CP"). The
+     same initials serve the hint badge and the no-photo fallback, so a slot
+     never changes its letters when it is revealed. */
+  const initials = initialsFor(player);
 
   return (
     <div
@@ -64,9 +64,9 @@ export default function PlayerSlot({
           <span className="slot__name">{player.name}</span>
         </button>
       ) : (
-        <div className="slot__placeholder" title={hint ? 'Dica: primeira letra' : 'Jogador desconhecido'}>
+        <div className="slot__placeholder" title={hint ? 'Dica: iniciais do jogador' : 'Jogador desconhecido'}>
           <span>{player.position}</span>
-          {hint && <em className="slot__hint">{player.name[0].toUpperCase()}</em>}
+          {hint && <em className="slot__hint">{initials}</em>}
         </div>
       )}
     </div>

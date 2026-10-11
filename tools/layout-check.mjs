@@ -67,12 +67,37 @@ const browser = await chromium.launch();
 for (const [w, h] of SIZES) {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   await page.goto(URL, { waitUntil: 'networkidle' });
-  // the app opens on its intro screen: step into the pitch game before probing
+  // the app opens on its intro screen; "Jogar" now goes through the era picker,
+  // so choose a decade (the widest option list) before the pitch game.
   const play = page.locator('[data-testid="play"]');
   if (await play.count()) await play.first().click();
-  await page.waitForSelector('.pitch', { timeout: 15000 });
+  await page.waitForSelector('[data-testid="era-select"]', { timeout: 15000 });
 
   const steps = [];
+
+  // 0. era picker: a scrollable list screen, so it is checked for horizontal
+  //    overflow and a full set of options, not for fitting one screen
+  const era = await page.evaluate(() => {
+    const c = document.querySelector('ion-content.eraScreen');
+    const inner = c && c.shadowRoot && c.shadowRoot.querySelector('.inner-scroll');
+    const grid = document.querySelector('.era__grid');
+    return {
+      hScroll: inner ? inner.scrollWidth > inner.clientWidth + 1 : false,
+      options: document.querySelectorAll('.era__option').length,
+      gridRight: grid ? +grid.getBoundingClientRect().right.toFixed(1) : null,
+      vw: window.innerWidth,
+    };
+  });
+  if (era.hScroll) fails.push(`${w}x${h} [era picker]: horizontally scrolls`);
+  if (era.options !== 8) fails.push(`${w}x${h} [era picker]: ${era.options} options (expected 8)`);
+  if (era.gridRight !== null && era.gridRight > era.vw + 1) {
+    fails.push(`${w}x${h} [era picker]: grid overflows viewport (${era.gridRight} > ${era.vw})`);
+  }
+  console.log(`${w}x${h} [era picker]`.padEnd(30), `${era.options} options`.padEnd(26),
+    era.hScroll ? 'FAIL: h-scroll' : era.gridRight !== null && era.gridRight > era.vw + 1 ? 'FAIL: overflow' : 'ok');
+
+  await page.click('[data-testid="era-all"]');
+  await page.waitForSelector('.pitch', { timeout: 15000 });
 
   // 1. initial state
   steps.push(['initial', await probe(page)]);
@@ -113,10 +138,14 @@ for (const [w, h] of SIZES) {
     steps.push(['round finished', await probe(page)]);
   }
 
-  // 6. "Novo Jogo" in the header -> a fresh random match, still no scrolling
+  // 6. "Novo Jogo" in the header -> the era picker opens; choose again and the
+  //    fresh match must still fit without scrolling
   const newGame = page.locator('[data-testid="new-game"]');
   if (await newGame.count()) {
     await newGame.first().click();
+    await page.waitForSelector('[data-testid="era-select"]', { timeout: 15000 });
+    await page.click('[data-testid="era-1990"]');
+    await page.waitForSelector('.pitch', { timeout: 15000 });
     await page.waitForTimeout(450);
     steps.push(['new game', await probe(page)]);
   }
