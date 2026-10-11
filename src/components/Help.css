@@ -1,0 +1,117 @@
+/* ---------- instructions screen ----------
+   Unlike the game, this screen is meant to scroll: it is a plain readable
+   column of rules. */
+.helpScreen {
+  --background: #0f1115;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-bottom: 28px;
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.help {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 16px 6px 8px;
+  color: #d6dbe3;
+}
+
+.help__logo {
+  display: block;
+  width: 84px;
+  height: auto;
+  margin: 2px auto 10px;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
+}
+
+.help__title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  color: #fff;
+}
+
+.help__lead {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #9aa4b2;
+  text-align: center;
+}
+
+.help__head {
+  margin: 22px 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffc400;
+}
+
+.help__steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.help__steps li::marker { color: #b30000; font-weight: 700; }
+
+.help__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #c7ced9;
+}
+
+.help__rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.help__rules li {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #1b1f27;
+  border: 1px solid #262c37;
+  border-radius: 10px;
+}
+
+.help__rules ion-icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  font-size: 18px;
+  color: #ffc400;
+}
+
+.help__rules strong {
+  display: block;
+  font-size: 13px;
+  color: #fff;
+}
+
+.help__rules span {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #9aa4b2;
+}
+
+.help__note {
+  margin: 24px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #262c37;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #6f7987;
+}

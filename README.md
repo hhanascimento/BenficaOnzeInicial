@@ -17,6 +17,30 @@ npm test      # data + photo + rules checks (node tools/verify.ts)
 npm run layout # no-scroll layout check in a headless browser (needs playwright)
 ```
 
+## Screens
+
+The app has three screens, one mounted at a time (`src/App.tsx`):
+
+| Screen | Component | What it does |
+| --- | --- | --- |
+| **Home** | `src/components/Home.tsx` | The club crest, the title and two ways in: **Jogar** (the pitch game) and **Instruções**. Also repeats the saved career stats once you have played. |
+| **Game** | `src/components/Game.tsx` | The pitch game — one historic XI per round. A home button in the header returns to the intro screen. |
+| **Instructions** | `src/components/Help.tsx` | "Como jogar": the rules, how player names match, the scoring and what every button does. |
+
+Everything is in Portuguese (pt-PT). Because only one screen is mounted at a time, leaving the
+pitch also stops its clock and no stale round is shown when you come back.
+
+The app icon is the official **club crest** (`public/favicon.svg`, `public/assets/benfica-logo.svg`),
+rendered from the same artwork into the Android launcher icons.
+
+The Android wrapper is **portrait only**: `MainActivity` is declared
+`android:screenOrientation="portrait"` (so the splash is locked too, and rotation never re-creates the
+activity) and the `<application>` carries `android:appCategory="game"`. The category matters because
+apps targeting API 36 have their orientation lock ignored on displays of `sw >= 600dp`, and
+**games are the documented exception** to that rule. The alternative, temporary opt-out is a
+`android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY` property — but it stops working at
+API 37. Browsers ignore orientation locks, so the web build keeps its wide two-column layout.
+
 ## How the game works
 
 - `Match` metadata (date, opponent, competition, stage, score) is shown at the top.
@@ -43,8 +67,6 @@ npm run layout # no-scroll layout check in a headless browser (needs playwright)
 Toggleable in-game and remembered between sessions:
 
 - **Hints** — empty slots show each player's first initial (costs 15 % of the score).
-- **Blind match** — the score and date are hidden until the round ends.
-- **Hard** — autocomplete suggestions are off, so it is pure recall.
 
 ### Input
 
@@ -86,9 +108,10 @@ keep their natural height and the **pitch takes what is left**.
 - The autocomplete list opens upwards, otherwise it would fall off the bottom and create a
   scrollbar.
 
-`tools/layout-check.mjs` drives the real app in headless Chromium at 11 viewport sizes × 5 game
-states (start, suggestions open, wrong guess, right guess, round finished) and fails if any
-scroller overflows, if a photo is clipped by the pitch edge or if the pitch gets too small.
+`tools/layout-check.mjs` drives the real app in headless Chromium: it steps through the intro
+screen, then plays 11 viewport sizes × 5 game states (start, suggestions open, wrong guess, right
+guess, round finished) and fails if any scroller overflows, if a photo is clipped by the pitch
+edge or if the pitch gets too small.
 On a machine without Chromium or system fonts, `tools/browser-setup.sh` unpacks a browser plus
 its shared libraries locally (no root needed).
 
@@ -102,11 +125,12 @@ its shared libraries locally (no root needed).
 | `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, name matching, difficulty and scoring rules, and the pitch-coordinate grid. |
 | `tools/layout-check.mjs` | The `npm run layout` suite: no scrolling, no clipped players and a usable pitch at 11 viewports × 5 states. |
 | `tools/browser-setup.sh` | Unpacks headless Chromium + fonts + shared libs into `/tmp` for the layout check (no root). |
-| `public/assets/players/*.jpg` | 149 player photos, ~2 MB total. |
+| `public/assets/players/*` | 394 player photos, ~5.5 MB total. |
 
-Coverage: **288 matches**, **373 distinct players**, **149 players with a photo (40 %)**.
-Photos exist mainly for well-documented players; for older or minor players Wikipedia has no
-freely-licensed portrait, so those slots show initials.
+Coverage: **288 matches**, **395 distinct player slugs**, **394 of them with a photo on disk (99.7 %)**.
+Every slot except one resolves to a real photo. The single gap is the 1989 `fonseca` (a different
+player from the 1978 `alberto-fonseca`, who does have a photo); that slot falls back to initials and
+is the only remaining "asset exists" note in `npm test`.
 
 ## Photo pipeline (`tools/`)
 

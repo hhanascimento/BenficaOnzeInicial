@@ -67,6 +67,9 @@ const browser = await chromium.launch();
 for (const [w, h] of SIZES) {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   await page.goto(URL, { waitUntil: 'networkidle' });
+  // the app opens on its intro screen: step into the pitch game before probing
+  const play = page.locator('[data-testid="play"]');
+  if (await play.count()) await play.first().click();
   await page.waitForSelector('.pitch', { timeout: 15000 });
 
   const steps = [];

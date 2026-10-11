@@ -1,0 +1,87 @@
+/* ---------- intro screen ----------
+   A single centred column over the app's dark background. The content is
+   capped in width so the crest and the buttons stay centred on desktop. */
+.homeScreen {
+  --background: radial-gradient(circle at 50% 20%, #1a0d10 0%, #0f1115 60%);
+  /* same flex behaviour as ion-content.game: fill the shell, never scroll */
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 24px 22px 28px;
+  text-align: center;
+}
+
+.home__logo {
+  width: clamp(120px, 34vh, 210px);
+  height: auto;
+  /* the crest already reads on dark: a soft glow just lifts it off the page */
+  filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.55));
+}
+
+.home__title {
+  margin: 4px 0 0;
+  font-size: clamp(24px, 5.4vh, 34px);
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: #fff;
+}
+
+.home__title::after {
+  /* a thin red-to-gold rule under the title, echoing the club colours */
+  content: "";
+  display: block;
+  width: 112px;
+  height: 3px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #b30000, #ffc400);
+}
+
+.home__tagline {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #9aa4b2;
+}
+
+.home__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 14px;
+}
+
+.home__actions ion-button {
+  margin: 0;
+  --border-radius: 12px;
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.home__stats {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #8b93a1;
+}
+
+/* very short windows (phone in landscape): the crest gives way to the buttons */
+@media (max-height: 560px) {
+  .home { gap: 6px; padding: 12px 22px; }
+  .home__logo { width: clamp(84px, 26vh, 130px); }
+  .home__title::after { margin-top: 6px; }
+  .home__actions { margin-top: 8px; gap: 8px; }
+}
