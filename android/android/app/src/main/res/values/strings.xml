@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Benfica Onze Inicial</string>
+    <string name="title_activity_main">Benfica Onze Inicial</string>
+    <string name="package_name">com.benficaonzeinicial.app</string>
+    <string name="custom_url_scheme">com.benficaonzeinicial.app</string>
+</resources>
