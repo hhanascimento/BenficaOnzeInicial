@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#0F1115</color>
+    <!-- Fallback tint for the launcher plate; the adaptive icon draws
+         @mipmap/ic_launcher_background instead (see tools/android-icons.mjs). -->
+    <color name="ic_launcher_background">#99000a</color>
 </resources>
