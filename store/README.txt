@@ -9,21 +9,21 @@ Imagem em tablet de 10 polegadas .. tablet-10/
 One line per file, with the alt text to paste beside it in the Play Console:
 
   file                           size        weight  alt text
-  app-icon-512.png               512x512     99 KB   Emblema do Sport Lisboa e Benfica sobre um fundo escuro.
+  app-icon-512.png               512x512     311 KB  O ícone da aplicação: BENFICA ONZE INICIAL a branco e dourado sobre uma placa vermelha com filete dourado.
   feature-graphic-1024x500.png   1024x500    366 KB  Emblema do Benfica ao lado do logótipo ONZE INICIAL num relvado verde: Adivinha o onze inicial em jogos históricos — 480 jogos · de 1961 aos dias de hoje.
   phone/01-home.png              1080x1920   415 KB  O ecrã inicial: o emblema do clube, o nome ONZE INICIAL e os botões Jogar e Instruções.
   phone/02-era.png               1080x1920   257 KB  O ecrã Novo Jogo: escolher a época, do conjunto todo a cada década, ou um intervalo de anos à medida.
-  phone/03-play.png              1080x1920   221 KB  Um jogo a começar: o resultado e a competição da partida, o onze todo por descobrir no relvado e o campo para escrever um nome.
-  phone/04-hints.png             1080x1920   277 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
-  phone/05-summary.png           1080x1920   364 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
+  phone/03-play.png              1080x1920   230 KB  Um jogo a começar: o resultado e a competição da partida, o onze todo por descobrir no relvado e o campo para escrever um nome.
+  phone/04-hints.png             1080x1920   294 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
+  phone/05-summary.png           1080x1920   392 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
   phone/06-help.png              1080x1920   294 KB  O ecrã de instruções: como jogar, como os nomes são aceites e como a pontuação é calculada.
   tablet-7/01-home.png           1170x2080   429 KB  O ecrã inicial: o emblema do clube, o nome ONZE INICIAL e os botões Jogar e Instruções.
   tablet-7/02-era.png            1170x2080   283 KB  O ecrã Novo Jogo: escolher a época, do conjunto todo a cada década, ou um intervalo de anos à medida.
-  tablet-7/03-hints.png          1170x2080   434 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
-  tablet-7/04-summary.png        1170x2080   558 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
-  tablet-10/01-play.png          1620x2880   356 KB  Um jogo a começar: o resultado e a competição da partida, o onze todo por descobrir no relvado e o campo para escrever um nome.
-  tablet-10/02-hints.png         1620x2880   642 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
-  tablet-10/03-summary.png       1620x2880   880 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
+  tablet-7/03-hints.png          1170x2080   423 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
+  tablet-7/04-summary.png        1170x2080   536 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
+  tablet-10/01-play.png          1620x2880   358 KB  Um jogo a começar: o resultado e a competição da partida, o onze todo por descobrir no relvado e o campo para escrever um nome.
+  tablet-10/02-hints.png         1620x2880   653 KB  A mesma partida com as duas dicas ligadas: cada jogador por descobrir mostra as iniciais e o número de camisola.
+  tablet-10/03-summary.png       1620x2880   905 KB  Resumo da ronda: pontos, tempo, sequência e a discriminação da pontuação, com o onze todo revelado no relvado.
   tablet-10/04-help.png          1620x2880   415 KB  O ecrã de instruções: como jogar, como os nomes são aceites e como a pontuação é calculada.
 
 Every screenshot is the real app and every one is portrait 9:16: the Android
