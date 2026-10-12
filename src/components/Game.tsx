@@ -5,7 +5,7 @@ import {
 } from '@ionic/react';
 import {
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, close, shuffle, home,
+  flame, trophy, bulb, shirt, close, shuffle, home,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import type { LineupPlayer, Match } from '../types';
@@ -17,16 +17,16 @@ import {
 } from '../lib/text';
 import type { KnownPlayer } from '../lib/text';
 import {
-  loadSettings, saveSettings, loadStats, saveStats,
+  loadStats, saveStats,
   scoreRound, applyResult, formatTime, formatDate, shuffled,
   matchesInRange, yearBounds, formatEraLabel,
 } from '../lib/game';
-import type { Settings, Stats, RoundResult, EraRange } from '../lib/game';
+import type { Stats, RoundResult, EraRange } from '../lib/game';
 import '../App.css';
 
 addIcons({
   football, refresh, eye, checkmarkCircle, closeCircle, timerOutline,
-  flame, trophy, bulb, close, shuffle, home,
+  flame, trophy, bulb, shirt, close, shuffle, home,
 });
 
 const MATCHES = matchesData as unknown as Match[];
@@ -59,8 +59,15 @@ interface Props {
 
 type Msg = { text: string; kind: 'ok' | 'bad' | 'info' };
 
-const SETTING_LABELS: { key: keyof Settings; label: string; icon: string; hint: string }[] = [
-  { key: 'hints', label: 'Dicas', icon: bulb, hint: 'Mostra as iniciais de cada jogador' },
+/** The two hints a round offers. Each is a per-match choice, not a profile setting. */
+type HintKey = 'initials' | 'number';
+
+/** Both hints off — the state every match starts in. */
+const NO_HINTS: Record<HintKey, boolean> = { initials: false, number: false };
+
+const HINT_LABELS: { key: HintKey; label: string; icon: string; hint: string }[] = [
+  { key: 'initials', label: 'Dica - Iniciais', icon: bulb, hint: 'Mostra as iniciais de cada jogador por descobrir' },
+  { key: 'number', label: 'Dica - Número Camisola', icon: shirt, hint: 'Mostra o número de camisola de cada jogador por descobrir' },
 ];
 
 export default function Game({ era, onHome, onNewGame }: Props) {
@@ -87,7 +94,9 @@ export default function Game({ era, onHome, onNewGame }: Props) {
   const [usedReveal, setUsedReveal] = useState(false);
   const [result, setResult] = useState<RoundResult | null>(null);
 
-  const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  /* Hints belong to the match, not to the saved profile: every match starts
+     with both off, and they can only be switched on (see toggleHint). */
+  const [hints, setHints] = useState<Record<HintKey, boolean>>(() => ({ ...NO_HINTS }));
   const [stats, setStats] = useState<Stats>(() => loadStats());
 
   const secondsRef = useRef(0);
@@ -115,7 +124,8 @@ export default function Game({ era, onHome, onNewGame }: Props) {
       revealed: revealed.size,
       seconds: secondsRef.current,
       usedReveal,
-      hintsOn: settings.hints,
+      hintsOn: hints.initials,
+      numbersOn: hints.number,
     });
     setResult(res);
     setStats((prev) => {
@@ -162,14 +172,14 @@ export default function Game({ era, onHome, onNewGame }: Props) {
       setIndex(0);
     }
     resetRound();
+    // a new match starts clean: the hints only last for the match they were on
+    setHints({ ...NO_HINTS });
   }
 
-  function toggle(key: keyof Settings) {
-    setSettings((prev) => {
-      const next = { ...prev, [key]: !prev[key] };
-      saveSettings(next);
-      return next;
-    });
+  /* A hint can only be turned on. Once it is, it stays for the whole match —
+     a restart included — so a second click on an active hint does nothing. */
+  function toggleHint(key: HintKey) {
+    setHints((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
   }
 
   function flashShake() {
@@ -295,15 +305,15 @@ export default function Game({ era, onHome, onNewGame }: Props) {
           {/* the mode toggles step aside in the recap so the pitch keeps its height */}
           {!finished && (
           <div className="settings" data-testid="settings">
-            {SETTING_LABELS.map(({ key, label, icon, hint }) => (
+            {HINT_LABELS.map(({ key, label, icon, hint }) => (
               <button
                 key={key}
                 type="button"
-                title={hint}
-                className={`toggle ${settings[key] ? 'toggle--on' : ''}`}
+                title={hints[key] ? `${hint} — ativa até ao fim do jogo` : hint}
+                className={`toggle ${hints[key] ? 'toggle--on toggle--locked' : ''}`}
                 data-testid={`toggle-${key}`}
-                aria-pressed={settings[key]}
-                onClick={() => toggle(key)}
+                aria-pressed={hints[key]}
+                onClick={() => toggleHint(key)}
               >
                 <IonIcon icon={icon} /> {label}
               </button>
@@ -317,7 +327,8 @@ export default function Game({ era, onHome, onNewGame }: Props) {
               revealed={revealed}
               lastRevealed={lastRevealed}
               home={match.home}
-              hints={settings.hints && !finished}
+              hintInitials={hints.initials && !finished}
+              hintNumber={hints.number && !finished}
               onSlotClick={(i) => {
                 if (revealed.has(i)) setLastRevealed(i);
               }}

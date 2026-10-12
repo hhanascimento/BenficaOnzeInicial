@@ -364,6 +364,11 @@ ion-footer ion-toolbar {
   color: #ff9aa8;
 }
 
+/* A hint that is on stays on for the rest of the match, so it can no longer be
+   switched off: drop the hover cue that suggests otherwise. */
+.toggle--locked { cursor: default; }
+.toggle--locked:hover { border-color: #b30000; }
+
 /* ---------- stats bar + timer ---------- */
 .statbar { margin-bottom: 8px; }
 

@@ -161,3 +161,14 @@
   background: #ffc400;
   border-radius: 999px;
 }
+
+/* The shirt-number badge mirrors the initials one across the circle, so with
+   both hints on each badge grows inwards from its own top corner and neither
+   can leave the slot box (the box is wider than the circle). White reads as
+   the number tag of a shirt and keeps the two hints apart at a glance. */
+.slot__hint--number {
+  right: auto;
+  left: 0;
+  background: #ffffff;
+  color: #0f1115;
+}

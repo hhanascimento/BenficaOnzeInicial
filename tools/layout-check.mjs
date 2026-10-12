@@ -150,10 +150,12 @@ for (const [w, h] of SIZES) {
     steps.push(['new game', await probe(page)]);
   }
 
-  // 7. hints on -> the first-letter badges are the outermost thing on screen
-  const hints = page.locator('[data-testid="toggle-hints"]');
+  // 7. both hints on -> the two badges are the outermost thing on screen
+  const hints = page.locator('[data-testid="toggle-initials"]');
   if (await hints.count()) {
     await hints.first().click();
+    const numbers = page.locator('[data-testid="toggle-number"]');
+    if (await numbers.count()) await numbers.first().click();
     await page.waitForTimeout(300);
     steps.push(['hints on', await probe(page)]);
   }

@@ -74,16 +74,19 @@ API 37. Browsers ignore orientation locks, so the web build keeps its wide two-c
 | Feature | Behaviour |
 | --- | --- |
 | **Timer** | Starts with the round, stops the moment the XI is complete (or you give up). |
-| **Scoring** | `revealed × 100` + time bonus (up to 7 min), minus 15 % if hints are on. Giving up pays only 25 % of the base. |
+| **Scoring** | `revealed × 100` + time bonus (up to 7 min), minus 15 % for each hint used (so both hints cost 30 %). Giving up pays only 25 % of the base. |
 | **Streak & score** | Current streak and lifetime score in the header, persisted to `localStorage`, plus best streak and best single-round score. |
 | **Round summary** | Points, time, streak and a line-by-line breakdown of how the score was built. |
 | **Era** | Every game starts by choosing a period: the whole history, a decade, or a custom `from`–`to` year range. Within one game the era is fixed; the footer shows it and how many matches it holds, and the deck wraps around only that subset. The last choice is remembered and highlighted, but the picker always appears, so a new game is always a deliberate choice. |
 
 ### Options
 
-Toggleable in-game and remembered between sessions:
+Two hints, each a separate toggle on the pitch. They are **per match**, not a saved preference: every match starts with both off, and once you switch a hint on it stays for the rest of that match — restarting the round included — and clears only on the next match.
 
-- **Hints** — empty slots show each player's **initials** (first and last letter: `HC` for Hélder Cristóvão, `CP` for Costa Pereira). The display name is usually just the surname, so a one-word name is expanded through the source slug to reach the first name; a name already written in two words keeps its own letters (`Bastos Lopes` → `BL`). Costs 15 % of the score.
+- **Dica - Iniciais** — empty slots show each player's **initials** (first and last letter: `HC` for Hélder Cristóvão, `CP` for Costa Pereira). The display name is usually just the surname, so a one-word name is expanded through the source slug to reach the first name; a name already written in two words keeps its own letters (`Bastos Lopes` → `BL`).
+- **Dica - Número Camisola** — empty slots show the player's **shirt number** for the 88 % of dataset slots that carry one; the rest show nothing for this hint.
+
+Each hint costs 15 % of the score, so switching on both costs 30 %.
 
 ### Input
 
@@ -149,7 +152,7 @@ matches and the raw copy differed only in 105 competition/stage strings.
 | --- | --- |
 | `src/data/matches.json` | 480 matches (1961 → 2026), each with the starting XI, positions and pitch coordinates. Generated, do not hand-edit. |
 | `tools/tm_expand.py`, `tools/merge_matches.py`, `tools/fill_photos.py` | Extend the dataset: pick and scrape more matches per decade, localize and merge them, and resolve photos for players that have none. |
-| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, name matching, hint initials, suggestion ranking and fuller names, era ranges, scoring rules, and the pitch-coordinate grid. |
+| `tools/verify.ts` | The `npm test` suite: dataset integrity, photos on disk, name matching, hint initials, suggestion ranking and fuller names, era ranges, scoring rules (both hints), and the pitch-coordinate grid. |
 | `tools/layout-check.mjs` | The `npm run layout` suite: the era picker, then no scrolling, no clipped players and a usable pitch at 11 viewports × 5 states. |
 | `tools/browser-setup.sh` | Unpacks headless Chromium + fonts + shared libs into `/tmp` for the layout check (no root). |
 | `public/assets/players/*` | 439 player photos, ~6.6 MB total (all real JPEGs, ≤400 px, no metadata). |
@@ -186,6 +189,11 @@ Three different players are called **Fonseca**, and each has his own slug and ph
 left-back, **António Manuel Tavares Fonseca**, b. 1965). Only the last one had no freely-licensed
 image on Wikimedia; that photo was fetched by hand, and because the original is a small scan
 (100 × 132 px) it looks soft wherever a wide screen scales the slot up.
+
+One display name disagrees with its slug: **`leotm`** is the source page's shorthand for the player
+the game shows as **Léo** (his photo stays at `leotm.jpg`). A slug only feeds an alias when it reads
+as more than one word, so the shorthand is never shown beside the suggestion and is not accepted as
+an answer — see `aliasFromSlug`.
 
 ## Photo pipeline (`tools/`)
 

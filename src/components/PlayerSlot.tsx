@@ -9,7 +9,9 @@ interface Props {
   revealed: boolean;
   justRevealed?: boolean;
   /** Show the player's initials in the empty slot. */
-  hint?: boolean;
+  hintInitials?: boolean;
+  /** Show the player's shirt number in the empty slot. */
+  hintNumber?: boolean;
   /** This is the slot the player last looked at. */
   active?: boolean;
   onClick?: () => void;
@@ -19,7 +21,8 @@ export default function PlayerSlot({
   player,
   revealed,
   justRevealed,
-  hint,
+  hintInitials,
+  hintNumber,
   active,
   onClick,
 }: Props) {
@@ -33,6 +36,18 @@ export default function PlayerSlot({
      same initials serve the hint badge and the no-photo fallback, so a slot
      never changes its letters when it is revealed. */
   const initials = initialsFor(player);
+
+  /* The shirt-number hint only exists for the players whose record carries a
+     number (88% of the dataset): the rest simply show nothing for that hint. */
+  const showNumber = hintNumber && player.number != null;
+
+  const hintTitle = hintInitials && showNumber
+    ? 'Dicas: iniciais e número de camisola'
+    : hintInitials
+      ? 'Dica: iniciais do jogador'
+      : showNumber
+        ? 'Dica: número de camisola'
+        : 'Jogador desconhecido';
 
   return (
     <div
@@ -64,9 +79,10 @@ export default function PlayerSlot({
           <span className="slot__name">{player.name}</span>
         </button>
       ) : (
-        <div className="slot__placeholder" title={hint ? 'Dica: iniciais do jogador' : 'Jogador desconhecido'}>
+        <div className="slot__placeholder" title={hintTitle}>
           <span>{player.position}</span>
-          {hint && <em className="slot__hint">{initials}</em>}
+          {hintInitials && <em className="slot__hint slot__hint--initials">{initials}</em>}
+          {showNumber && <em className="slot__hint slot__hint--number">{player.number}</em>}
         </div>
       )}
     </div>

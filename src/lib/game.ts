@@ -1,17 +1,5 @@
 import type { Match } from '../types';
 
-/* ------------------------------------------------------------------ *
- * Settings (persisted so the player's preferred options stick)
- * ------------------------------------------------------------------ */
-
-export interface Settings {
-  /** Show a first-letter hint inside each unknown slot. */
-  hints: boolean;
-}
-
-export const DEFAULT_SETTINGS: Settings = { hints: false };
-
-const SETTINGS_KEY = 'benfica-xi:settings';
 const STATS_KEY = 'benfica-xi:stats';
 
 function readJSON<T>(key: string, fallback: T): T {
@@ -30,13 +18,6 @@ function writeJSON(key: string, value: unknown) {
   } catch {
     /* storage unavailable (private mode) — the game still works in-memory */
   }
-}
-
-export function loadSettings(): Settings {
-  return readJSON<Settings>(SETTINGS_KEY, DEFAULT_SETTINGS);
-}
-export function saveSettings(s: Settings) {
-  writeJSON(SETTINGS_KEY, s);
 }
 
 /* ------------------------------------------------------------------ *
@@ -78,8 +59,10 @@ export interface RoundInput {
   seconds: number;
   /** The player pressed "Reveal" instead of finishing it themselves. */
   usedReveal: boolean;
-  /** Hint mode was on during the round. */
+  /** The initials hint was on during the round. */
   hintsOn: boolean;
+  /** The shirt-number hint was on during the round. */
+  numbersOn?: boolean;
 }
 
 export interface RoundResult {
@@ -92,12 +75,17 @@ export interface RoundResult {
 
 const PER_PLAYER = 100;
 const TIME_BUDGET = 420; // seconds after which there is no speed bonus left
+/** Each hint used during a round costs this share of the base score. */
+const HINT_PENALTY = 0.15;
 
 export function scoreRound(input: RoundInput): RoundResult {
   const base = input.revealed * PER_PLAYER;
   const solved = input.revealed === input.total && !input.usedReveal;
   const timeBonus = solved ? Math.max(0, TIME_BUDGET - input.seconds) : 0;
-  const hintPenalty = input.hintsOn ? Math.round(base * 0.15) : 0;
+  /* Each hint deducts the same amount, so the two simply add up instead of
+     compounding — turning on both costs exactly twice the one-hint penalty. */
+  const hintsUsed = (input.hintsOn ? 1 : 0) + (input.numbersOn ? 1 : 0);
+  const hintPenalty = hintsUsed * Math.round(base * HINT_PENALTY);
   const raw = solved ? base + timeBonus - hintPenalty : base * 0.25;
   return {
     points: Math.max(0, Math.round(raw)),

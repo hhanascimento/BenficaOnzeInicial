@@ -34,7 +34,7 @@ const RULES = [
   {
     icon: bulb,
     title: 'Dicas',
-    text: 'Liga as dicas para ver as iniciais de cada jogador por descobrir — «HC» para Hélder Cristóvão, «CP» para Costa Pereira. Ao usar dicas, a pontuação final é 15% menor.',
+    text: 'Há duas dicas, ligadas por jogo. «Dica - Iniciais» mostra as iniciais de cada jogador por descobrir — «HC» para Hélder Cristóvão, «CP» para Costa Pereira — e «Dica - Número Camisola» mostra o número de camisola. Cada dica custa 15% da pontuação final. Depois de ligares uma dica, ela fica ativa até ao fim do jogo, mesmo que reinicies; só o jogo seguinte começa outra vez sem dicas.',
   },
   {
     icon: eye,

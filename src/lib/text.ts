@@ -52,10 +52,23 @@ export function nameFromSlug(slug: string): string {
 
 /**
  * The pool of known players for a set of matches: one entry per distinct
- * display name, each carrying the aliases its slug adds. 212 of the 373 names
+ * display name, each carrying the aliases its slug adds. 238 of the 414 names
  * in the current dataset gain an alias this way (e.g. "Grimaldo" also answers
  * to "Alejandro Grimaldo").
  */
+/**
+ * The alias a dataset slug earns for a player, or '' when it has none to give.
+ *
+ * An alias exists to carry the name words the display name leaves out
+ * ("grimaldo" ← "alejandro-grimaldo"), so a lone slug word such as `leotm` – the
+ * source page's shorthand for the player shown as "Léo" – is an internal
+ * identifier rather than a name, and must not become one in the game.
+ */
+export function aliasFromSlug(slug: string): string {
+  const name = nameFromSlug(slug);
+  return name.includes(' ') ? name : '';
+}
+
 export function buildPool(matches: { lineup: { name: string; slug?: string }[] }[]): KnownPlayer[] {
   const byName = new Map<string, KnownPlayer>();
   for (const m of matches) {
@@ -67,7 +80,7 @@ export function buildPool(matches: { lineup: { name: string; slug?: string }[] }
         known = { name: p.name, aliases: [] };
         byName.set(key, known);
       }
-      const alias = p.slug ? nameFromSlug(p.slug) : '';
+      const alias = p.slug ? aliasFromSlug(p.slug) : '';
       if (!alias || normalize(alias) === key) continue;
       known.aliases ??= [];
       if (!known.aliases.includes(alias)) known.aliases.push(alias);
@@ -83,7 +96,7 @@ export function buildPool(matches: { lineup: { name: string; slug?: string }[] }
  * looking at rather than from the merged pool entry.
  */
 export function knownFrom(player: { name: string; slug?: string }): KnownPlayer {
-  const alias = player.slug ? nameFromSlug(player.slug) : '';
+  const alias = player.slug ? aliasFromSlug(player.slug) : '';
   return {
     name: player.name,
     aliases: alias && normalize(alias) !== normalize(player.name) ? [alias] : [],

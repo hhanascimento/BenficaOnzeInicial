@@ -13,7 +13,7 @@ import {
 import type { KnownPlayer } from '../src/lib/text.ts';
 import { slotLeft, X_SCALE } from '../src/lib/pitch.ts';
 import {
-  scoreRound, applyResult, formatTime, EMPTY_STATS, DEFAULT_SETTINGS, shuffleDeck,
+  scoreRound, applyResult, formatTime, EMPTY_STATS, shuffleDeck,
   shuffled, matchYear, yearBounds, matchesInRange, presetFor, formatEraLabel, ERA_PRESETS,
 } from '../src/lib/game.ts';
 
@@ -184,6 +184,24 @@ check('first + last of an alias works too',
 check('slug reads as a name', nameFromSlug('alejandro-grimaldo') === 'Alejandro Grimaldo',
   nameFromSlug('alejandro-grimaldo'));
 check('alias names the right player', matchesPlayer('Alejandro Grimaldo', target('Grimaldo'), pool));
+
+/* One dataset slug is the source page's shorthand rather than the player's
+   name ("leotm" for the player shown as "Léo"). A lone slug word must not
+   become a name the game shows next to the suggestion or accepts as an
+   answer, while a real multi-word slug keeps feeding its alias. */
+const leo = target('Léo');
+check('the display name carries the accent', leo.name === 'Léo', leo.name);
+check('a one-word slug contributes no alias',
+  (leo.aliases ?? []).length === 0, (leo.aliases ?? []).join(','));
+check('that shorthand is not accepted as an answer',
+  !matchesPlayer('leotm', leo, pool) && !matchesPlayer('Leotm', leo, pool));
+check('the player answers to Léo with or without the accent',
+  matchesPlayer('Léo', leo, pool) && matchesPlayer('leo', leo, pool));
+check('its initials are the single letter', initialsFor({ name: 'Léo', slug: 'leotm' }) === 'L',
+  initialsFor({ name: 'Léo', slug: 'leotm' }));
+check('a multi-word slug still contributes its alias',
+  fullerName(target("Preud'homme")) === 'Michel Preudhomme',
+  String(fullerName(target("Preud'homme"))));
 // Two players answer to "Alejandro", so the first name alone must not pick one:
 // the first + last form is what disambiguates them.
 check('a shared first name stays ambiguous',
@@ -400,11 +418,30 @@ check('reveal counts as not solved',
 check('hints cost points',
   scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: false, hintsOn: false }).points >
   scoreRound({ total: 11, revealed: 11, seconds: 60, usedReveal: false, hintsOn: true }).points);
+
+/* The two hints are independent and each deducts the same amount of points, so
+   the shirt-number hint costs exactly what the initials hint costs, and both
+   together cost twice that rather than compounding. */
+const openRound = { total: 11, revealed: 11, seconds: 60, usedReveal: false };
+const initialsHint = scoreRound({ ...openRound, hintsOn: true });
+const numberHint = scoreRound({ ...openRound, hintsOn: false, numbersOn: true });
+const bothHints = scoreRound({ ...openRound, hintsOn: true, numbersOn: true });
+check('the shirt-number hint costs the same as the initials hint',
+  numberHint.points === initialsHint.points
+  && numberHint.hintPenalty === initialsHint.hintPenalty,
+  `${numberHint.points} vs ${initialsHint.points}`);
+check('the shirt-number hint costs points on its own',
+  scoreRound({ ...openRound, hintsOn: false }).points > numberHint.points);
+check('two hints cost exactly twice one hint',
+  bothHints.hintPenalty === initialsHint.hintPenalty * 2,
+  `${bothHints.hintPenalty} vs ${initialsHint.hintPenalty * 2}`);
+check('a hint deducts 15% of the base', initialsHint.hintPenalty === Math.round(initialsHint.base * 0.15));
+check('no hints means no penalty', scoreRound({ ...openRound, hintsOn: false }).hintPenalty === 0);
 check('partial round gives partial credit',
   scoreRound({ total: 11, revealed: 4, seconds: 60, usedReveal: false, hintsOn: false }).points > 0);
 check('zero found gives zero', scoreRound({ total: 11, revealed: 0, seconds: 5, usedReveal: false, hintsOn: false }).points === 0);
 check('points never negative',
-  scoreRound({ total: 11, revealed: 11, seconds: 9999, usedReveal: true, hintsOn: true }).points >= 0);
+  scoreRound({ total: 11, revealed: 11, seconds: 9999, usedReveal: true, hintsOn: true, numbersOn: true }).points >= 0);
 
 section('stats');
 const win = applyResult(EMPTY_STATS, full);
@@ -493,7 +530,6 @@ check('shuffled keeps every item and honours avoidFirst', (() => {
 
 section('misc');
 check('formatTime mm:ss', formatTime(0) === '00:00' && formatTime(65) === '01:05' && formatTime(3600) === '60:00');
-check('default settings shape', Object.keys(DEFAULT_SETTINGS).sort().join(',') === 'hints');
 check('stats are pure (input untouched)', EMPTY_STATS.played === 0 && EMPTY_STATS.streak === 0);
 
 console.log(`\n${failures === 0 ? 'PASS' : 'FAIL'}: ${checks - failures}/${checks} checks passed`);

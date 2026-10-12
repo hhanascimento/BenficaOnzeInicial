@@ -7,7 +7,8 @@ interface Props {
   revealed: Set<number>;
   lastRevealed: number | null;
   home: boolean;
-  hints?: boolean;
+  hintInitials?: boolean;
+  hintNumber?: boolean;
   onSlotClick?: (index: number) => void;
 }
 
@@ -16,7 +17,8 @@ export default function Pitch({
   revealed,
   lastRevealed,
   home,
-  hints,
+  hintInitials,
+  hintNumber,
   onSlotClick,
 }: Props) {
   return (
@@ -38,7 +40,8 @@ export default function Pitch({
             player={player}
             revealed={revealed.has(index)}
             justRevealed={lastRevealed === index}
-            hint={hints}
+            hintInitials={hintInitials}
+            hintNumber={hintNumber}
             active={revealed.has(index) && lastRevealed === index}
             onClick={() => onSlotClick?.(index)}
           />
