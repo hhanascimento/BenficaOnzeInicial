@@ -44,8 +44,13 @@ icon in Black — so the files are font-independent and render identically in ev
 has neither Impact nor Arial Black, so the design would drift.) `tools/wordmark.py` regenerates
 `public/favicon.svg` from a Roboto TTF.
 
-The Android launcher icons keep the crest artwork alone — at launcher sizes the wordmark would be
-illegible and the adaptive-icon mask would clip it.
+The Android launcher icons are that same mark, not the crest alone: `tools/android-icons.mjs`
+(`npm run icons`) cuts every density of `ic_launcher.png`, `ic_launcher_round.png` and the two
+adaptive layers out of `public/favicon.svg`. The adaptive layers follow Android's 108dp canvas with
+the plate mapped onto the **72dp viewport** a launcher mask actually shows, so the icon the launcher
+draws is the plate the app uses. One thing has to give: a square gold frame cannot fit inside a
+circular mask at that size, so the adaptive frame is drawn with a 24dp corner radius — the only
+deliberate difference from the file above.
 
 The Android wrapper is **portrait only**: `MainActivity` is declared
 `android:screenOrientation="portrait"` (so the splash is locked too, and rotation never re-creates the
@@ -218,3 +223,41 @@ stopped. `tm.py` scrapes the match/line-up data (Transfermarkt publicly allows c
 
 > Licensing: the photos are freely licensed, but several require attribution. Check the source
 > Wikipedia/Wikimedia Commons article before redistributing.
+
+## Store assets (Google Play)
+
+`tools/store-assets.mjs` cuts the whole store listing out of the app itself, so the listing cannot
+drift from the product: the icon is the app's own icon (`public/favicon.svg`) squared up for the
+store, the feature graphic is the crest and the **ONZE INICIAL** wordmark on the pitch, and every
+screenshot is the real game driven the way a player drives it (pick an era, solve half the XI with
+both hints on, finish the round for the recap).
+
+Play's [icon specification](https://developer.android.com/distribute/google-play/resources/icon-design-specifications)
+wants a **full square, no rounding, no outer shadow** — Play applies the mask itself, at a radius of
+30% of the icon — so the icon asset drops the rounded plate of the on-screen mark and pulls the gold
+frame in to 54px (a 153px corner radius would otherwise bite into it).
+
+```bash
+npm run dev &
+npm run store                 # writes store/, then re-checks every file against Play's rules
+```
+
+| Play Console field | File | Size |
+| --- | --- | --- |
+| Ícone da aplicação | `store/app-icon-512.png` | 512 × 512, 32-bit PNG |
+| Gráfico de funcionalidades | `store/feature-graphic-1024x500.png` | 1024 × 500, 24-bit PNG |
+| Imagens do telemóvel | `store/phone/*.png` | 1080 × 1920 |
+| Capturas de ecrã do tablet de 7" | `store/tablet-7/*.png` | 1170 × 2080 |
+| Imagem em tablet de 10" | `store/tablet-10/*.png` | 1620 × 2880 |
+
+Every screenshot is portrait 9:16, because the Android build is portrait-only — that is how the
+game looks on a phone *and* on a tablet, so a landscape shot would be a picture of something the
+app never does. The run ends by reading the written files back and failing if any of them breaks a
+Play requirement (icon 512 × 512 32-bit with alpha and ≤ 1 MB, feature graphic 1024 × 500 without
+alpha, screenshots 24-bit without alpha between 320 and 3840 px and no longer than 2:1).
+
+The same mark goes to the launcher: `npm run icons` writes every density of the Android icon
+resources from `public/favicon.svg` (see *Android launcher icons* above).
+
+The graphic's own text is set in Roboto (Apache-2.0), the same font `tools/wordmark.py` outlines
+for the marks; point `ROBOTO` at a TTF if it is not in the usual place.

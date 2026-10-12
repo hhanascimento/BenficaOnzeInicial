@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "node tools/verify.ts",
     "verify": "npm run lint && npm run build && npm test",
-    "layout": "node tools/layout-check.mjs"
+    "layout": "node tools/layout-check.mjs",
+    "store": "node tools/store-assets.mjs",
+    "icons": "node tools/android-icons.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",
